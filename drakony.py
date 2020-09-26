@@ -6,6 +6,7 @@ from pprint import pprint
 import json
 import APIdrakony
 import db
+import tags
 
 bot = 0
 # Enable logging
@@ -20,16 +21,11 @@ def start(update, context):
 
 
 def dragonOnImageQuestion(update, context):
-    print(type(update))
-
     fromUserClickedId = update.callback_query.from_user.id
     fromUserClickedIdName = update.callback_query.from_user.username
     fromUserSenderId = update.callback_query.message.reply_to_message.from_user.id
     fromUserSenderIName= update.callback_query.message.reply_to_message.from_user.name
-    print (" fromUserClickedId: "+str(fromUserClickedId))
-    print (" fromUserSenderId: "+str(fromUserSenderId))
-    print (" fromUserClickedId: "+ fromUserClickedIdName)
-    print (" fromUserSenderId: "+fromUserSenderIName )
+
     if (fromUserClickedId != fromUserSenderId):
         bot.answer_callback_query(
             callback_query_id=update.callback_query.id, text="Только "+fromUserSenderIName+" может тыкать на кнопки!", show_alert=False)
@@ -39,12 +35,6 @@ def dragonOnImageQuestion(update, context):
     groupId = update["callback_query"]["message"]["chat"]["id"]
     replyMsgText = update.callback_query.message.reply_to_message.text
     imgUrlFromReply = replyMsgText  # TODO: add url proccesing here
-    print("msgId "+str(msgId))
-    print("groupId "+str(groupId))
-    print("text "+replyMsgText)
-    print("from "+str(fromUserClickedId))
-    print("userName "+update.callback_query.from_user.username)
-
     tagColumnId = db.searchMsgWithImgID(msgId,  groupId)
 
     query = update.callback_query
@@ -78,20 +68,19 @@ def dragonOnImageQuestion(update, context):
     if (msgType[0] == 'tag'):
         db.insertAnswer(tagColumnId,  msgType[1])
         keyboard = [
-            [InlineKeyboardButton("black", callback_data='color_black'),
-             InlineKeyboardButton("blue", callback_data='color_blue'),
-             InlineKeyboardButton("purple", callback_data='color_purple')],
-            [InlineKeyboardButton("bronze", callback_data='color_bronze'),
-             InlineKeyboardButton("golden", callback_data='color_golden'),
-             InlineKeyboardButton("green", callback_data='color_green'),
-             InlineKeyboardButton("silver", callback_data='color_silver')],
-            [InlineKeyboardButton("grey", callback_data='color_grey'),
-             InlineKeyboardButton("red", callback_data='color_red'),
-             InlineKeyboardButton("silver", callback_data='color_silver'),
-             InlineKeyboardButton("white", callback_data='color_white')],
-            [InlineKeyboardButton("yellow", callback_data='color_yellow'),
-             InlineKeyboardButton("rainbow", callback_data='color_rainbow'),
-             InlineKeyboardButton("other", callback_data='color_other')]
+            [InlineKeyboardButton("black ⬛️", callback_data='color_black'),
+             InlineKeyboardButton("blue 🟦", callback_data='color_blue'),
+             InlineKeyboardButton("purple 🟪", callback_data='color_purple')],
+            [InlineKeyboardButton("bronze 🥉", callback_data='color_bronze'),
+             InlineKeyboardButton("golden 🥇", callback_data='color_golden'),
+             InlineKeyboardButton("green 🟢", callback_data='color_green'),
+             InlineKeyboardButton("silver 🥈", callback_data='color_silver')],
+            [InlineKeyboardButton("grey 🐭", callback_data='color_grey'),
+             InlineKeyboardButton("red 🟥", callback_data='color_red'),
+             InlineKeyboardButton("white ⬜️", callback_data='color_white')],
+            [InlineKeyboardButton("yellow 🟨", callback_data='color_yellow'),
+             InlineKeyboardButton("rainbow 🌈", callback_data='color_rainbow'),
+             InlineKeyboardButton("other ❓", callback_data='color_other')]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         query.edit_message_text(
@@ -99,10 +88,10 @@ def dragonOnImageQuestion(update, context):
     if (msgType[0] == 'color'):
         db.insertAnswer(tagColumnId,  msgType[1])
         keyboard = [
-            [InlineKeyboardButton("safe", callback_data='rating_safe'),
-             InlineKeyboardButton("suggestive", callback_data='rating_suggestive'),
-             InlineKeyboardButton("questionable", callback_data='rating_questionable'),
-             InlineKeyboardButton("explicit", callback_data='rating_explicit')]
+            [InlineKeyboardButton("safe ✅", callback_data='rating_safe'),
+             InlineKeyboardButton("suggestive 😏", callback_data='rating_suggestive'),
+             InlineKeyboardButton("questionable ❔", callback_data='rating_questionable'),
+             InlineKeyboardButton("explicit 🔞", callback_data='rating_explicit')]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         query.edit_message_text(
@@ -112,26 +101,27 @@ def dragonOnImageQuestion(update, context):
             db.insertAnswer(tagColumnId,  msgType[1])
         keyboard = [
             [InlineKeyboardButton("solo", callback_data='moreTags_solo'),
-             InlineKeyboardButton("photo", callback_data='moreTags_photo'),
+             InlineKeyboardButton("photo 📷", callback_data='moreTags_photo'),
              InlineKeyboardButton("traditional art", callback_data='moreTags_tradArt')],
             [InlineKeyboardButton("animated", callback_data='moreTags_animated'),
-             InlineKeyboardButton("hug", callback_data='moreTags_hug'),
-             InlineKeyboardButton("kissing", callback_data='moreTags_kissing')],
-            [InlineKeyboardButton("city", callback_data='moreTags_city'),
-             InlineKeyboardButton("cloud", callback_data='moreTags_cloud'),
-             InlineKeyboardButton("fire", callback_data='moreTags_fire')],
-            [InlineKeyboardButton("forest", callback_data='moreTags_forest'),
-             InlineKeyboardButton("mountain", callback_data='moreTags_mountain'),
-             InlineKeyboardButton("night", callback_data='moreTags_night')],
-            [InlineKeyboardButton("sea", callback_data='moreTags_sea'),
-             InlineKeyboardButton("sky", callback_data='moreTags_sky'),
-             InlineKeyboardButton("space", callback_data='moreTags_space')],
-            [InlineKeyboardButton("stars", callback_data='moreTags_stars'),
+             InlineKeyboardButton("hug 🙆‍♂️", callback_data='moreTags_hug'),
+             InlineKeyboardButton("kissing 👩‍❤️‍💋‍👨", callback_data='moreTags_kissing')],
+            [InlineKeyboardButton("city 🌆", callback_data='moreTags_city'),
+             InlineKeyboardButton("cloud ☁️", callback_data='moreTags_cloud'),
+             InlineKeyboardButton("fire 🔥", callback_data='moreTags_fire'),
+              InlineKeyboardButton("mlp 🐴", callback_data='moreTags_mlp')],
+            [InlineKeyboardButton("forest 🌳", callback_data='moreTags_forest'),
+             InlineKeyboardButton("mountain ⛰", callback_data='moreTags_mountain'),
+             InlineKeyboardButton("night 🌃", callback_data='moreTags_night')],
+            [InlineKeyboardButton("sea 💧", callback_data='moreTags_sea'),
+             InlineKeyboardButton("sky 🎈", callback_data='moreTags_sky'),
+             InlineKeyboardButton("space 🛸", callback_data='moreTags_space')],
+            [InlineKeyboardButton("stars ✨", callback_data='moreTags_stars'),
              InlineKeyboardButton("male", callback_data='moreTags_male'),
              InlineKeyboardButton("female", callback_data='moreTags_female')],
             [InlineKeyboardButton("herm", callback_data='moreTags_herm'),
              InlineKeyboardButton("breasts", callback_data='moreTags_breasts'),
-             InlineKeyboardButton("feathered wings", callback_data='moreTags_feathWings')],
+             InlineKeyboardButton("feathered wings 🦢", callback_data='moreTags_feathWings')],
             [InlineKeyboardButton("humanized", callback_data='moreTags_humanized'),
              InlineKeyboardButton("furry", callback_data='moreTags_furry'),
              InlineKeyboardButton("anthro", callback_data='moreTags_anthro'),
@@ -143,19 +133,24 @@ def dragonOnImageQuestion(update, context):
             query.edit_message_text(
                 "Продолжаем. Вот еще кучка популярных тегов. Что бы закончить жми END ✅", reply_markup=reply_markup)
     if (msgType[0] == 'moreTags' and msgType[1] == 'end'):
-        APIdrakony.imgSend(imgUrlFromReply, db.getAnswers(tagColumnId))
-        keyboard =  [[InlineKeyboardButton(text="Перейти в галерею", url="https://art.drakony.net",callback_data="1")]]
+        tagList = db.getAnswers(tagColumnId)
+        APIdrakony.imgSend(imgUrlFromReply, tagList)
+        keyboard =  [[InlineKeyboardButton(text="Молодец! А теперь можно перейти в галерею", url="https://art.drakony.net",callback_data="1")]]
         reply_markup = InlineKeyboardMarkup(keyboard)
 
-        # again search
-        res = re.search("(?P<url>https?://[^\s]+)", replyMsgText)
-        if (res is not None):
-            httpUrlStr = res.group("url")
-            imgUrlFromDrakony = APIdrakony.imgSearch(httpUrlStr)
+        tagsString=""
+        for val in tagList:
+            finTag = tags.getFullTageName(val)
+            finTag = finTag.replace(' ', '_')
+            finTag = "#"+finTag.replace(':', '_')
+            tagsString +=finTag+'   '
 
+        replyMsgText+='\n '
+        replyMsgText+=tagsString
+         
         query.edit_message_text(
-            imgUrlFromDrakony,reply_markup=reply_markup)
-        msgId = update.callback_query.message.message_id
+            replyMsgText,reply_markup=reply_markup)
+        msgId = update.callback_query.message.reply_to_message.message_id
         # TODO: replace this to api method
         chatId = update["callback_query"]["message"]["chat"]["id"]
         bot.delete_message(chatId, msgId) 
@@ -188,10 +183,14 @@ def echo(update, context):
 def main():
     """Start the bot."""
     db.createDB()
+
+    config = ""
+    with open('config.json') as config_file:
+        config = json.load(config_file)
     # Create the Updater and pass it your bot's token.
     # Make sure to set use_context=True to use the new context based callbacks
     # Post version 12 this will no longer be necessary
-    token=""
+    token=config["telegram-bot-token"]
     updater = Updater(
         token, use_context=True)
     global bot 
@@ -204,7 +203,6 @@ def main():
 
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("clear", clear))
     dp.add_handler(CallbackQueryHandler(dragonOnImageQuestion))
     #dp.add_handler(CommandHandler("help", help_command))
 

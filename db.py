@@ -1,5 +1,6 @@
 import sqlite3
 import os.path
+import logging
 
 
 def createDB():
@@ -11,7 +12,7 @@ def createDB():
             cursor.execute("""CREATE TABLE answers (id INTEGER, answer text,FOREIGN KEY (id) REFERENCES msgWithImg(id)) """)
             conn.commit()
         else:
-            print("DB already exist")
+            logging.debug("DB already exist")
 
 
 
@@ -32,7 +33,6 @@ def searchMsgWithImgID(msgID, grouID):
     cursor.execute(
         """SELECT id FROM msgWithImg WHERE msgId LIKE ? AND groupID LIKE ?""", data)
     id = cursor.fetchall()
-    print(id)
     if (len(id) > 0):
         return int(id[0][0])
     return -1
@@ -43,7 +43,6 @@ def getAnswers(id):
     cursor = conn.cursor()
     cursor.execute("SELECT answer FROM answers WHERE id LIKE ?", (id,))
     answers = cursor.fetchall()
-    print(answers)
     answList = []
     for answ in answers:
         if (len(answ) > 0):

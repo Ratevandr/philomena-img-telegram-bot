@@ -1,9 +1,15 @@
 import requests
 import json
 import tags
+import logging
 
 def imgSearch(imgUrl):
-    URL = "https://dev-art.drakony.net/api/v1/json/search/reverse"
+    config = ""
+    with open('config.json') as config_file:
+        config = json.load(config_file)
+
+    philomenaUrl = config["philomena-url"]
+    URL = philomenaUrl+"/api/v1/json/search/reverse"
 
     PARAMS = {'url': imgUrl,
               'distance': 0.25}
@@ -17,7 +23,7 @@ def imgSearch(imgUrl):
     print(jsonData)
     if ("total" in jsonData):
         if (jsonData["total"] > 0):
-            finalImgUrl = "https://dev-art.drakony.net" + \
+            finalImgUrl = philomenaUrl + \
                 jsonData["images"][0]["representations"]["full"]
             finalImgUrl += "  \n"
             print(finalImgUrl)
@@ -33,6 +39,13 @@ def imgSearch(imgUrl):
 
 
 def imgSend(imgUrl, tagsList):
+    config = ""
+    with open('config.json') as config_file:
+        config = json.load(config_file)
+
+    philomenaUrl = config["philomena-url"]
+    philomenaKey = config["philomena-key"]
+
     tagsString = ""
     tagsList.append('artist needed')
     tagsList.append('source needed')
@@ -41,10 +54,7 @@ def imgSend(imgUrl, tagsList):
 
     tagsString = tagsString[:-2]
 
-    print(tagsString)
-
-    KEY = ""
-    URL = "https://dev-art.drakony.net/api/v1/json/images?key="+KEY
+    URL = philomenaUrl+"/api/v1/json/images?key="+philomenaKey
     print(URL)
     headers = {'Content-type': 'application/json'}
     jsonDict = {
@@ -55,7 +65,9 @@ def imgSend(imgUrl, tagsList):
         },
         "url": imgUrl
     }
+    print("===========")
     print(jsonDict)
+    print("===========")
     jsonData = json.dumps(jsonDict)
 
     response = requests.post(url=URL,  data=jsonData, headers=headers)
@@ -69,5 +81,6 @@ def imgSend(imgUrl, tagsList):
         print("error:"+e)
 
     if "image" not in jsonData:
-        print("ERROR")
+        print(jsonData)
+        logging.error("Error")
     return ""
