@@ -5,6 +5,7 @@ import logging
 import deviantart
 import htmlUtil
 
+
 def imgSearch(imgUrl):
     config = ""
     with open('config.json') as config_file:
@@ -18,24 +19,18 @@ def imgSearch(imgUrl):
     response = requests.post(url=URL, data=PARAMS)
 
     data = response.text
-    # print(data)
-
     jsonData = json.loads(data)
 
-    print(jsonData)
     if ("total" in jsonData):
         if (jsonData["total"] > 0):
             finalImgUrl = philomenaUrl + \
                 jsonData["images"][0]["representations"]["full"]
             finalImgUrl += "  \n"
-            print(finalImgUrl)
             for tag in jsonData["images"][0]["tags"]:
                 finTag = tag.replace(' ', '_')
                 finTag = finTag.replace(':', '_')
-                print(finTag)
                 finalImgUrl += " #"+finTag
             return finalImgUrl
-        print("Error search")
         return ""
     return ""
 
@@ -57,14 +52,12 @@ def imgSend(imgUrl, tagsList):
     tagsString = tagsString[:-2]
 
     URL = philomenaUrl+"/api/v1/json/images?key="+philomenaKey
-    print(URL)
     realImgUrl = ""
     if (htmlUtil.isDeviantUrl(imgUrl)):
         realImgUrl = deviantart.getImgUrlFromDeviantArt(imgUrl)
     else:
         realImgUrl = imgUrl
-    
-    print(realImgUrl)
+
     headers = {'Content-type': 'application/json'}
     jsonDict = {
         "image": {
@@ -74,22 +67,20 @@ def imgSend(imgUrl, tagsList):
         },
         "url": realImgUrl
     }
-    print("===========")
-    print(jsonDict)
-    print("===========")
+
     jsonData = json.dumps(jsonDict)
 
     response = requests.post(url=URL,  data=jsonData, headers=headers)
     data = response.text
- 
 
     try:
         jsonData = json.loads(data)
- 
+
     except ValueError as e:
-        print("error:"+e)
+        logging.error(f"Error while sending image: {e}")
 
     if "image" not in jsonData:
-        print(jsonData)
-        logging.error("Error")
+        logging.error(
+            f"Error while sending image: - image key not found in JSON {jsonData}")
+        logging.error(f"Sended JSON {jsonDict}")
     return ""

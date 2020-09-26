@@ -7,6 +7,7 @@ import json
 import APIdrakony
 import db
 import tags
+import htmlUtil
 
 bot = 0
 # Enable logging
@@ -15,6 +16,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
+
 def start(update, context):
     """Send a message when the command /start is issued."""
     update.message.reply_text('Hi!')
@@ -22,26 +24,21 @@ def start(update, context):
 
 def dragonOnImageQuestion(update, context):
     fromUserClickedId = update.callback_query.from_user.id
-    fromUserClickedIdName = update.callback_query.from_user.username
     fromUserSenderId = update.callback_query.message.reply_to_message.from_user.id
-    fromUserSenderIName= update.callback_query.message.reply_to_message.from_user.name
+    fromUserSenderIName = update.callback_query.message.reply_to_message.from_user.name
 
     if (fromUserClickedId != fromUserSenderId):
         bot.answer_callback_query(
             callback_query_id=update.callback_query.id, text="Только "+fromUserSenderIName+" может тыкать на кнопки!", show_alert=False)
         return
     msgId = update.callback_query.message.message_id
-    # TODO: replace this to api method
-    groupId = update["callback_query"]["message"]["chat"]["id"]
+    groupId = update.callback_query.message.chat.id
     replyMsgText = update.callback_query.message.reply_to_message.text
-    imgUrlFromReply = replyMsgText  # TODO: add url proccesing here
+    imgUrlFromReply = replyMsgText
     tagColumnId = db.searchMsgWithImgID(msgId,  groupId)
 
     query = update.callback_query
-    # CallbackQueries need to be answered, even if no notification to the user is needed
-    # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
     query.answer()
-    #query.edit_message_text(text="Selected option: {}".format(query.data))
     msgType = query.data
     msgType = msgType.split('_')
     if (len(msgType) < 2):
@@ -83,14 +80,15 @@ def dragonOnImageQuestion(update, context):
              InlineKeyboardButton("other ❓", callback_data='color_other')]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        query.edit_message_text(
-            "Молодец :3 Теперь выбери цвет.", reply_markup=reply_markup)
+        query.edit_message_text("Молодец :3 Теперь выбери цвет.", reply_markup=reply_markup)
     if (msgType[0] == 'color'):
         db.insertAnswer(tagColumnId,  msgType[1])
         keyboard = [
             [InlineKeyboardButton("safe ✅", callback_data='rating_safe'),
-             InlineKeyboardButton("suggestive 😏", callback_data='rating_suggestive'),
-             InlineKeyboardButton("questionable ❔", callback_data='rating_questionable'),
+             InlineKeyboardButton(
+                 "suggestive 😏", callback_data='rating_suggestive'),
+             InlineKeyboardButton(
+                 "questionable ❔", callback_data='rating_questionable'),
              InlineKeyboardButton("explicit 🔞", callback_data='rating_explicit')]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -109,7 +107,7 @@ def dragonOnImageQuestion(update, context):
             [InlineKeyboardButton("city 🌆", callback_data='moreTags_city'),
              InlineKeyboardButton("cloud ☁️", callback_data='moreTags_cloud'),
              InlineKeyboardButton("fire 🔥", callback_data='moreTags_fire'),
-              InlineKeyboardButton("mlp 🐴", callback_data='moreTags_mlp')],
+             InlineKeyboardButton("mlp 🐴", callback_data='moreTags_mlp')],
             [InlineKeyboardButton("forest 🌳", callback_data='moreTags_forest'),
              InlineKeyboardButton("mountain ⛰", callback_data='moreTags_mountain'),
              InlineKeyboardButton("night 🌃", callback_data='moreTags_night')],
@@ -121,7 +119,7 @@ def dragonOnImageQuestion(update, context):
              InlineKeyboardButton("female", callback_data='moreTags_female')],
             [InlineKeyboardButton("herm", callback_data='moreTags_herm'),
              InlineKeyboardButton("breasts", callback_data='moreTags_breasts'),
-             InlineKeyboardButton("feathered wings 🦢", callback_data='moreTags_feathWings')],
+             InlineKeyboardButton("feath., wings 🦢", callback_data='moreTags_feathWings')],
             [InlineKeyboardButton("humanized", callback_data='moreTags_humanized'),
              InlineKeyboardButton("furry", callback_data='moreTags_furry'),
              InlineKeyboardButton("anthro", callback_data='moreTags_anthro'),
@@ -135,40 +133,44 @@ def dragonOnImageQuestion(update, context):
     if (msgType[0] == 'moreTags' and msgType[1] == 'end'):
         tagList = db.getAnswers(tagColumnId)
         APIdrakony.imgSend(imgUrlFromReply, tagList)
-        keyboard =  [[InlineKeyboardButton(text="Молодец! А теперь можно перейти в галерею", url="https://art.drakony.net",callback_data="1")]]
+        keyboard = [[InlineKeyboardButton(
+            text="Молодец! А теперь можно перейти в галерею", url="https://art.drakony.net", callback_data="1")]]
         reply_markup = InlineKeyboardMarkup(keyboard)
 
-        tagsString=""
+        tagsString = ""
         for val in tagList:
             finTag = tags.getFullTageName(val)
             finTag = finTag.replace(' ', '_')
             finTag = "#"+finTag.replace(':', '_')
-            tagsString +=finTag+'   '
+            tagsString += finTag+'   '
 
-        replyMsgText+='\n '
-        replyMsgText+=tagsString
-         
+        replyMsgText += '\n '
+        replyMsgText += tagsString
+
         query.edit_message_text(
-            replyMsgText,reply_markup=reply_markup)
+            replyMsgText, reply_markup=reply_markup)
         msgId = update.callback_query.message.reply_to_message.message_id
-        # TODO: replace this to api method
-        chatId = update["callback_query"]["message"]["chat"]["id"]
-        bot.delete_message(chatId, msgId) 
+        chatId = update.callback_query.message.chat.id
+        bot.delete_message(chatId, msgId)
 
         db.deleteOnKind(msgId,  groupId)
 
 
 def echo(update, context):
-    """Echo the user message."""
+    if (not htmlUtil.isCorrectUrl(str(update.message.text))):
+        logging.warning(
+            f"Image with url {str(update.message.text)} not supported")
+        return
+
     res = re.search("(?P<url>https?://[^\s]+)", str(update.message.text))
+
     if (res is not None):
         httpUrlStr = res.group("url")
         imgUrlFromDrakony = APIdrakony.imgSearch(httpUrlStr)
 
         if imgUrlFromDrakony:
             msgId = update.message.message_id
-            # TODO: replace this to api method
-            chatId = update["message"]["chat"]["id"]
+            chatId = update.message.chat.id
             bot.delete_message(chatId, msgId)
             bot.send_message(chatId, imgUrlFromDrakony)
         else:
@@ -181,32 +183,22 @@ def echo(update, context):
 
 
 def main():
-    """Start the bot."""
     db.createDB()
 
     config = ""
     with open('config.json') as config_file:
         config = json.load(config_file)
-    # Create the Updater and pass it your bot's token.
-    # Make sure to set use_context=True to use the new context based callbacks
-    # Post version 12 this will no longer be necessary
-    token=config["telegram-bot-token"]
+
+    token = config["telegram-bot-token"]
     updater = Updater(
         token, use_context=True)
-    global bot 
+    global bot
     bot = updater.bot
-    # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
-    # Add ConversationHandler to dispatcher that will be used for handling
-    # updates
-
-    # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CallbackQueryHandler(dragonOnImageQuestion))
-    #dp.add_handler(CommandHandler("help", help_command))
 
-    # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
 
     # Start the Bot

@@ -2,14 +2,22 @@ import re
 from urllib.parse import urlparse
 
 
-def getImgUrlFromMsg(msgText):
+def isCorrectUrl(msgText):
     res = re.search("(?P<url>https?://[^\s]+)",  msgText)
-    print("tyc: "+str(res))
-    r_image = re.search(r".*\.(jpg|png|gif|jpeg|webm)$", res.group("url"))
+    r_image = ""
+    if (isDeviantUrl(msgText)):
+        return True
+    else:
+        r_image = re.search(r".*\.(jpg|png|gif|jpeg|webm$)", res.group("url"))
 
+    httpUrlStr = ""
     if (res is not None) and (r_image is not None):
         httpUrlStr = res.group("url")
-    return httpUrlStr
+
+    if (httpUrlStr):
+        return True
+    return False
+
 
 def isDeviantUrl(imgUrl):
     urlparse(imgUrl)
@@ -18,11 +26,10 @@ def isDeviantUrl(imgUrl):
         return True
     return False
 
-#imgUrl = getImgUrlFromMsg("""https://art.drakony.net/img/view/2020/9/12/11.png  lolkekchecsdfgdfgdfg\
-#    dfgdfgdfgdfgdfgdfg
-#    sdfsdf
-#    https://art.drakony.net/kek.png """)
 
-#print(imgUrl)
+imgUrl = isCorrectUrl(
+    """https://www.deviantart.com/wifous/art/Reeeee-Sketch-856275439 """)
 
-isDeviantUrl("https://www.deviantart.com/moonandqibli/art/AT-Sekicion-856240142")
+# print(imgUrl)
+
+# isDeviantUrl("https://www.deviantart.com/moonandqibli/art/AT-Sekicion-856240142")
