@@ -2,6 +2,8 @@ import requests
 import json
 import tags
 import logging
+import deviantart
+import htmlUtil
 
 def imgSearch(imgUrl):
     config = ""
@@ -56,6 +58,13 @@ def imgSend(imgUrl, tagsList):
 
     URL = philomenaUrl+"/api/v1/json/images?key="+philomenaKey
     print(URL)
+    realImgUrl = ""
+    if (htmlUtil.isDeviantUrl(imgUrl)):
+        realImgUrl = deviantart.getImgUrlFromDeviantArt(imgUrl)
+    else:
+        realImgUrl = imgUrl
+    
+    print(realImgUrl)
     headers = {'Content-type': 'application/json'}
     jsonDict = {
         "image": {
@@ -63,7 +72,7 @@ def imgSend(imgUrl, tagsList):
             "tag_input": tagsString,
             "source_url": ""
         },
-        "url": imgUrl
+        "url": realImgUrl
     }
     print("===========")
     print(jsonDict)

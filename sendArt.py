@@ -2,12 +2,15 @@ import requests
 import logging
 import re
 import json
+import deviantart
 
 
 def imgSend(imgUrl):
     KEY = "vFqdJFf25ANz0ruZUihJ"
     URL = "https://dev-art.drakony.net/api/v1/json/images?key="+KEY
     print(URL)
+    realImgUrl = deviantart.getImgUrlFromDeviantArt(imgUrl)
+    print(realImgUrl)
     headers = {'Content-type': 'application/json'}
     jsonDict = {
         "image": {
@@ -27,9 +30,9 @@ def imgSend(imgUrl):
     try:
         jsonData = json.loads(data)
     except ValueError as e:
-        print("error:"+e)
+        logging.error(f"Error while sending img. Json parse error:  {e}")
     
     if "image" not in jsonData:
-        print("ERROR")
+        logging.error(f"Error while sending img:  {e}")
     return ""
 
