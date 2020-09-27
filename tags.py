@@ -13,7 +13,6 @@ tagsDit = {
     "silver": "color:silver",
     "grey": "color:grey",
     "red": "color:red",
-    "silver": "color:silver",
     "white": "color:white",
     "yellow": "color:yellow",
     "rainbow": "color:rainbow",

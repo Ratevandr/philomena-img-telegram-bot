@@ -32,16 +32,16 @@ def searchMsgWithImgID(msgID, grouID):
     cursor = conn.cursor()
     cursor.execute(
         """SELECT id FROM msgWithImg WHERE msgId LIKE ? AND groupID LIKE ?""", data)
-    id = cursor.fetchall()
-    if (len(id) > 0):
-        return int(id[0][0])
+    keyID = cursor.fetchall()
+    if (len(keyID) > 0):
+        return int(keyID[0][0])
     return -1
 
 
-def getAnswers(id):
+def getAnswers(keyID):
     conn = sqlite3.connect("botDB.db")  # или :memory: чтобы сохранить в RAM
     cursor = conn.cursor()
-    cursor.execute("SELECT answer FROM answers WHERE id LIKE ?", (id,))
+    cursor.execute("SELECT answer FROM answers WHERE id LIKE ?", (keyID,))
     answers = cursor.fetchall()
     answList = []
     for answ in answers:
@@ -50,16 +50,16 @@ def getAnswers(id):
     return answList
 
 
-def insertAnswer(id, answer):
+def insertAnswer(keyID, answer):
     conn = sqlite3.connect("botDB.db")
     cursor = conn.cursor()
-    data = (id, answer)
+    data = (keyID, answer)
     try:
         cursor.execute(
             """INSERT INTO answers  VALUES (?,?);""",  data)
         conn.commit()
     except Exception as err:
-        logging.warn(f"Most likely the field {answer} already exists")
+        logging.warn(f"Most likely the field {answer} already exists. Error {err}")
 
 
 def deleteOnKind(msgID, grouID):
@@ -69,9 +69,9 @@ def deleteOnKind(msgID, grouID):
     data = (msgID, grouID)
     cursor.execute(
         """DELETE FROM msgWithImg WHERE msgId=? AND groupID=?""",  data)
-    id = searchMsgWithImgID(msgID, grouID)
+    searchedMsgId = searchMsgWithImgID(msgID, grouID)
     cursor.execute(
-        """DELETE FROM answers WHERE id=?""", (id,))
+        """DELETE FROM answers WHERE id=?""", (searchedMsgId,))
     conn.commit()
 
  

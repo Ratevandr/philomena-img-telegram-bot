@@ -1,5 +1,5 @@
 import re
-from urllib.parse import urlparse, urlsplit
+from urllib.parse import urlparse
 import logging
 
 

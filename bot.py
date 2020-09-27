@@ -1,8 +1,7 @@
 import logging
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton, ReplyKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler, ConversationHandler
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 import re
-from pprint import pprint
 import json
 import APIdrakony
 import db
@@ -134,7 +133,6 @@ def dragonOnImageQuestion(update, context):
     if (msgType[0] == 'moreTags' and msgType[1] == 'end'):
         tagList = db.getAnswers(tagColumnId)
         APIdrakony.imgSend(imgUrlFromReply, tagList, fromUserSenderIName)
-        
         philomenaUrl=""
         with open('config.json') as config_file:
             config = json.load(config_file)
@@ -173,7 +171,7 @@ def dragonOnImageQuestion(update, context):
 
 def echo(update, context):
     if (not update.message or not update.message.text):
-        return 
+        return
     if (not htmlUtil.isCorrectUrl(str(update.message.text))):
         logging.warning(
             f"Image with url {str(update.message.text)} not supported")

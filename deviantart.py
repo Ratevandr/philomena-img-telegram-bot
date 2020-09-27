@@ -5,7 +5,7 @@ def getImgUrlFromDeviantArt(deviantUrl):
     url = deviantUrl
     html = urlopen(url).read()
     soup = BeautifulSoup(html, features="html.parser")
-    
+
     # kill all script and style elements
     for script in soup(["script", "style", "a"]):
         script.extract()    # rip it out
