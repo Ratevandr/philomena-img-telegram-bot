@@ -9,7 +9,7 @@ def createDB():
             cursor = conn.cursor()
             # Создание таблицы
             cursor.execute("""CREATE TABLE msgWithImg (id INTEGER PRIMARY KEY AUTOINCREMENT, imgUrl text, msgId INT8, groupID INT8) """)
-            cursor.execute("""CREATE TABLE answers (id INTEGER, answer text,FOREIGN KEY (id) REFERENCES msgWithImg(id)) """)
+            cursor.execute("""CREATE TABLE answers (id INTEGER, answer text UNIQUE,FOREIGN KEY (id) REFERENCES msgWithImg(id)) """)
             conn.commit()
         else:
             logging.debug("DB already exist")
@@ -54,9 +54,12 @@ def insertAnswer(id, answer):
     conn = sqlite3.connect("botDB.db")
     cursor = conn.cursor()
     data = (id, answer)
-    cursor.execute(
-        """INSERT INTO answers  VALUES (?,?);""",  data)
-    conn.commit()
+    try:
+        cursor.execute(
+            """INSERT INTO answers  VALUES (?,?);""",  data)
+        conn.commit()
+    except Exception as err:
+        logging.warn(f"Most likely the field {answer} already exists")
 
 
 def deleteOnKind(msgID, grouID):
