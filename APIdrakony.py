@@ -35,7 +35,7 @@ def imgSearch(imgUrl):
     return ""
 
 
-def imgSend(imgUrl, tagsList):
+def imgSend(imgUrl, tagsList, author):
     config = ""
     with open('config.json') as config_file:
         config = json.load(config_file)
@@ -53,7 +53,7 @@ def imgSend(imgUrl, tagsList):
 
     URL = philomenaUrl+"/api/v1/json/images?key="+philomenaKey
     realImgUrl = ""
-    if (htmlUtil.isDeviantUrl(imgUrl)):
+    if (htmlUtil.isDeviantart(imgUrl)):
         realImgUrl = deviantart.getImgUrlFromDeviantArt(imgUrl)
     else:
         realImgUrl = imgUrl
@@ -61,7 +61,7 @@ def imgSend(imgUrl, tagsList):
     headers = {'Content-type': 'application/json'}
     jsonDict = {
         "image": {
-            "description": "",
+            "description": "Sent by "+author+" from telegram bot",
             "tag_input": tagsString,
             "source_url": ""
         },
@@ -78,9 +78,11 @@ def imgSend(imgUrl, tagsList):
 
     except ValueError as e:
         logging.error(f"Error while sending image: {e}")
+        return
 
     if "image" not in jsonData:
         logging.error(
             f"Error while sending image: - image key not found in JSON {jsonData}")
         logging.error(f"Sended JSON {jsonDict}")
-    return ""
+        return
+    logging.info(f"Successful send img with url {realImgUrl}")
