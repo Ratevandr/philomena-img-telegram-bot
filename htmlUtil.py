@@ -16,6 +16,11 @@ def isDeviantart(msgText):
         return True
     return False
 
+def getDeviantartArtist(ImgUrl):
+    artPath = urlparse(ImgUrl).path.split('/')
+    if (artPath[2] == "art"):
+        return artPath[1]
+    return ""
 
 # check in whiteList
 
@@ -84,3 +89,4 @@ def extractUrlFromString(msgText):
 # https://d.facdn.net/art/hontoriel/1601189910/1601189910.hontoriel_il_1140xn_2599497791_1azb.jpg
 # https://sun9-57.userapi.com/lnd_2r82ADvF4ZiRUCcMYfoYCSf1wlJ7Y-tvgQ/04v2X50JA78.jpg
 # https://www.deviantart.com/m4wie/art/Free-like-the-wind-517581621
+#print(getDeviantartArtist("https://www.deviantart.com/m4wie/art/Free-like-the-wind-517581621"))

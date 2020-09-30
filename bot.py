@@ -146,7 +146,12 @@ def dragonOnImageQuestion(update, context):
             text="Молодец! А теперь можно перейти в галерею", url=philomenaUrl, callback_data="1")]]
         reply_markup = InlineKeyboardMarkup(keyboard)
 
+        deviantArtist=""
         tagsString = ""
+        if (htmlUtil.isDeviantart(imgUrlFromReply)):
+             deviantArtist = htmlUtil.getDeviantartArtist(imgUrlFromReply)
+             tagsString+="#artist_"+deviantArtist+'   '
+            
         disablePreview = False
         for val in tagList:
             finTag = tags.getFullTageName(val)

@@ -42,28 +42,35 @@ def imgSend(imgUrl, tagsList, author):
 
     philomenaUrl = config["philomena-url"]
     philomenaKey = config["philomena-key"]
-
-    tagsString = ""
-    tagsList.append('artist needed')
-    tagsList.append('source needed')
-    for val in tagsList:
-        tagsString += tags.getFullTageName(val)+', '
-
-    tagsString = tagsString[:-2]
+ 
 
     URL = philomenaUrl+"/api/v1/json/images?key="+philomenaKey
     realImgUrl = ""
+    sourceImgUrl = ""
+    tagsString = ""
     if (htmlUtil.isDeviantart(imgUrl)):
         realImgUrl = deviantart.getImgUrlFromDeviantArt(imgUrl)
+        deviantArtist = htmlUtil.getDeviantartArtist(imgUrl)
+        if (deviantArtist):
+            tagsString+='artist:'+str(deviantArtist)+', '
+            sourceImgUrl = imgUrl
     else:
         realImgUrl = imgUrl
+        tagsList.append('artist needed')
+        tagsList.append('source needed')
+
+    for val in tagsList:
+        
+        tagsString += tags.getFullTageName(val)+', '
+
+    tagsString = tagsString[:-2]
 
     headers = {'Content-type': 'application/json'}
     jsonDict = {
         "image": {
             "description": "Sent by "+author+" from telegram bot",
             "tag_input": tagsString,
-            "source_url": ""
+            "source_url": sourceImgUrl
         },
         "url": realImgUrl
     }
