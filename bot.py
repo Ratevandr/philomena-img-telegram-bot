@@ -192,7 +192,10 @@ def echo(update, context):
             msgId = update.message.message_id
             chatId = update.message.chat.id
             bot.delete_message(chatId, msgId)
-            bot.send_message(chatId, imgUrlFromDrakony)
+            if (imgUrlFromDrakony and (imgUrlFromDrakony.find('#explicit') != -1 or imgUrlFromDrakony.find('#questionable') != -1)): 
+                bot.send_message(chatId, imgUrlFromDrakony,  disable_web_page_preview=True)
+            else:
+                bot.send_message(chatId, imgUrlFromDrakony)
         else:
  
             keyboard = [[InlineKeyboardButton("Да", callback_data='answ_true'),
