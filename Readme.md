@@ -7,3 +7,6 @@ This is a small telegram bot for aggregating images from the chat and sending th
 ![screen one](https://github.com/Ratevandr/philomena-img-telegram-bot/blob/master/screenshot/1.png)
 ![screen two](https://github.com/Ratevandr/philomena-img-telegram-bot/blob/master/screenshot/2.png)
 ![screen three](https://github.com/Ratevandr/philomena-img-telegram-bot/blob/master/screenshot/3.png)
+
+## Installing
+$ pip install wheel python-telegram-bot bs4

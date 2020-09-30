@@ -4,24 +4,11 @@ import logging
 
 
 def isCorrectUrl(msgText):
-    res = re.search("(?P<url>https?://[^\s]+)",  msgText)
-    r_image = ""
-    if (urlInWhiteList(msgText)):
-        return True
-    else:
-        if (res):
-            r_image = re.search(
-                r".*\.(jpg|png|gif|jpeg|webm$)", res.group("url"))
-        else:
-            return False
-
-    httpUrlStr = ""
-    if (res is not None) and (r_image is not None):
-        httpUrlStr = res.group("url")
-
-    if (httpUrlStr):
-        return True
+    if (msgText):
+        if (urlInWhiteList(msgText)):
+            return True
     return False
+
 
 def isDeviantart(msgText):
     name = urlparse(msgText).hostname
@@ -53,7 +40,12 @@ def urlInWhiteList(imgUrl):
         hostName = hostNameList[1] +'.'+ hostNameList[2]
         
     if hostName == 'userapi.com':
-        return True
+        res = re.search("(?P<url>https?://[^\s]+)",  imgUrl)
+        r_image = re.search(
+                r".*\.(jpg|png|gif|jpeg|webm$)", res.group("url"))
+        if (r_image):
+            return True
+        return False
     if not name in whiteList:
         return False
 
@@ -63,7 +55,16 @@ def urlInWhiteList(imgUrl):
     artPath = urlparse(imgUrl).path.split('/')
     if (len(artPath) < 3 or artPath[2] != "art"):
         return False
-    return True
+    else:
+        if (isDeviantart(imgUrl)):
+            return True
+
+    res = re.search("(?P<url>https?://[^\s]+)",  imgUrl)
+    r_image = re.search(
+                r".*\.(jpg|png|gif|jpeg|webm$)", res.group("url"))
+    if (r_image):
+        return True
+    return False
 
 def extractUrlFromString(msgText):
     res = re.search("(?P<url>https?://[^\s]+)", msgText)
@@ -78,7 +79,8 @@ def extractUrlFromString(msgText):
 # print(imgUrl)
 
 #print(urlInWhiteList(
-#    "https://d.facdn.net/art/hontoriel/1601189910/1601189910.hontoriel_il_1140xn_2599497791_1azb.jpg"))
+ #  "https://cs11.pikabu.ru/post_img/2020/09/29/8/1601382904198781473.jpg"))
+# print(isCorrectUrl("https://cs11.pikabu.ru/post_img/2020/09/29/8/"))
 # https://d.facdn.net/art/hontoriel/1601189910/1601189910.hontoriel_il_1140xn_2599497791_1azb.jpg
 # https://sun9-57.userapi.com/lnd_2r82ADvF4ZiRUCcMYfoYCSf1wlJ7Y-tvgQ/04v2X50JA78.jpg
 # https://www.deviantart.com/m4wie/art/Free-like-the-wind-517581621
