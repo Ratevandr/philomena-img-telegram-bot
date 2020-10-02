@@ -44,7 +44,7 @@ def dragonOnImageQuestion(update, context):
         return
 
     if (msgType[0] == 'answ' and msgType[1] == 'false'):
-        query.edit_message_text("Ок")
+        bot.delete_message(groupId, msgId)
         return
 
     if (msgType[0] == 'answ'):
