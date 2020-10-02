@@ -165,12 +165,12 @@ def dragonOnImageQuestion(update, context):
         replyMsgText += '\n '
         replyMsgText += tagsString
         replyMsgText += "( Отправлено: "+fromUserSenderIName+")"
-        query.edit_message_text(
-            replyMsgText, reply_markup=reply_markup,  disable_web_page_preview=disablePreview)
+
         msgId = update.callback_query.message.reply_to_message.message_id
         chatId = update.callback_query.message.chat.id
         bot.delete_message(chatId, msgId)
-
+        bot.delete_message(chatId, update.callback_query.message.message_id)
+        bot.send_message(chatId, replyMsgText, reply_markup=reply_markup,  disable_web_page_preview=disablePreview)
         db.deleteOnKind(msgId,  groupId)
 
 
