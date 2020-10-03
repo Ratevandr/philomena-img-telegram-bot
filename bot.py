@@ -151,7 +151,11 @@ def dragonOnImageQuestion(update, context):
         if (htmlUtil.isDeviantart(imgUrlFromReply)):
              deviantArtist = htmlUtil.getDeviantartArtist(imgUrlFromReply)
              tagsString+="#artist_"+deviantArtist+'   '
-            
+
+        if (htmlUtil.isFurraffinity(imgUrlFromReply)):
+            furraffinityArtist = htmlUtil.getFurraffinityArtist(imgUrlFromReply)
+            tagsString+="#artist_"+furraffinityArtist+'   '
+
         disablePreview = False
         for val in tagList:
             finTag = tags.getFullTageName(val)
