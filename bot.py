@@ -178,7 +178,7 @@ def echo(update, context):
     if (not update.message or not update.message.text):
         return
     if (not htmlUtil.isCorrectUrl(str(update.message.text))):
-        logging.warning(
+        logging.debug(
             f"Image with url {str(update.message.text)} not supported")
         return
 

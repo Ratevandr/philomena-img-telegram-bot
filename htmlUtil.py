@@ -16,6 +16,18 @@ def isDeviantart(msgText):
         return True
     return False
 
+def isFurraffinity(msgText):
+    name = urlparse(msgText).hostname
+    if (name == 'd.facdn.net'):
+        return True
+    return False
+
+def getFurraffinityArtist(ImgUrl):
+    artPath = urlparse(ImgUrl).path.split('/')
+    if (artPath[1] == "art"):
+        return artPath[2]
+    return ""
+
 def getDeviantartArtist(ImgUrl):
     artPath = urlparse(ImgUrl).path.split('/')
     if (artPath[2] == "art"):
@@ -76,7 +88,6 @@ def extractUrlFromString(msgText):
 
     if (res is not None):
         httpUrlStr = res.group("url")
-        print(httpUrlStr)
         return httpUrlStr
 # imgUrl = isCorrectUrl(
 #    """https://i.pinimg.com/originals/1c/e5/db/1ce5dbebdbe6b8cd9dee74a2b6a0ff35.jpg """)
@@ -90,3 +101,4 @@ def extractUrlFromString(msgText):
 # https://sun9-57.userapi.com/lnd_2r82ADvF4ZiRUCcMYfoYCSf1wlJ7Y-tvgQ/04v2X50JA78.jpg
 # https://www.deviantart.com/m4wie/art/Free-like-the-wind-517581621
 #print(getDeviantartArtist("https://www.deviantart.com/m4wie/art/Free-like-the-wind-517581621"))
+#print(getFurraffinityArtist("https://d.facdn.net/art/hontoriel/1601189910/1601189910.hontoriel_il_1140xn_2599497791_1azb.jpg"))

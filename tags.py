@@ -49,7 +49,8 @@ tagsDit = {
     "artist needed": "artist needed",
     "source needed": "source needed",
     "human": "human",
-    "mlp": "mlp"}
+    "mlp": "mlp",
+    "artist questionable":"artist questionable"}
 
 
 def getFullTageName(tagName):

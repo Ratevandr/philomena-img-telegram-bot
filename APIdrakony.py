@@ -57,9 +57,20 @@ def imgSend(imgUrl, tagsList, author):
             tagsString+='artist:'+str(deviantArtist)+', '
             sourceImgUrl = imgUrl
     else:
-        realImgUrl = imgUrl
-        tagsList.append('artist needed')
-        tagsList.append('source needed')
+        if (htmlUtil.isFurraffinity(imgUrl)):
+            furraffinityArtist = htmlUtil.getFurraffinityArtist(imgUrl)
+            if (furraffinityArtist):
+                tagsString+='artist:'+str(furraffinityArtist)+', '
+                tagsList.append('source needed')
+                tagsList.append('artist questionable')
+                realImgUrl = imgUrl
+                sourceImgUrl = "https://www.furaffinity.net/user/"+str(furraffinityArtist)+"/"
+            else:
+                logging.error("Error getting furraffinity artist!")
+        else:
+            realImgUrl = imgUrl
+            tagsList.append('artist needed')
+            tagsList.append('source needed')
 
     for val in tagsList:
         
