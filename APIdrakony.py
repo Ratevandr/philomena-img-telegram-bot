@@ -61,8 +61,7 @@ def imgSend(imgUrl, tagsList, author):
             furraffinityArtist = htmlUtil.getFurraffinityArtist(imgUrl)
             if (furraffinityArtist):
                 tagsString+='artist:'+str(furraffinityArtist)+', '
-                tagsList.append('source needed')
-                tagsList.append('artist questionable')
+                tagsList.append('useless source url')
                 realImgUrl = imgUrl
                 sourceImgUrl = "https://www.furaffinity.net/user/"+str(furraffinityArtist)+"/"
             else:
