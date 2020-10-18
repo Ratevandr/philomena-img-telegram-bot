@@ -32,6 +32,10 @@ def imgSearch(imgUrl):
                 finTag = tag.replace(' ', '_')
                 finTag = finTag.replace(':', '_')
                 finalImgUrl += " #"+finTag
+            if jsonData["images"] and jsonData["images"][0] and jsonData["images"][0]["description"]:
+                desc = jsonData["images"][0]["description"]
+                desc = desc.replace('@',' ')
+                finalImgUrl += " "+desc
             return finalImgUrl
         return ""
     return ""
