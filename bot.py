@@ -101,7 +101,7 @@ def dragonOnImageQuestion(update, context):
              InlineKeyboardButton("green 🟢", callback_data='secondColor_scgreen'),
              InlineKeyboardButton("silver 🥈", callback_data='secondColor_scsilver')],
             [InlineKeyboardButton("grey 🐭", callback_data='secondColor_scgrey'),
-             InlineKeyboardButton("red 🟥", callback_data='secondColor_srsced'),
+             InlineKeyboardButton("red 🟥", callback_data='secondColor_scred'),
              InlineKeyboardButton("white ⬜️", callback_data='secondColor_scwhite'),
              InlineKeyboardButton("rainbow 🌈", callback_data='secondColor_scrainbow')],
         [
@@ -129,42 +129,124 @@ def dragonOnImageQuestion(update, context):
         query.edit_message_text(
             "А ты хорош :3 Теперь выбери рейтинг.", reply_markup=reply_markup)
     if (msgType[0] == 'rating' or msgType[0] == 'moreTags'):
-        if (msgType[1] != 'end'):
+        if (msgType[1] != 'end' and msgType[1] != 'moreTags2' and msgType[1] != 'prev'):
             db.insertAnswer(tagColumnId,  msgType[1])
         keyboard = [
             [InlineKeyboardButton("solo", callback_data='moreTags_solo'),
-             InlineKeyboardButton("photo 📷", callback_data='moreTags_photo'),
-             InlineKeyboardButton("traditional art", callback_data='moreTags_tradArt')],
-            [InlineKeyboardButton("animated", callback_data='moreTags_animated'),
-             InlineKeyboardButton("hug 🙆‍♂️", callback_data='moreTags_hug'),
-             InlineKeyboardButton("kissing 👩‍❤️‍💋‍👨", callback_data='moreTags_kissing')],
-            [InlineKeyboardButton("city 🌆", callback_data='moreTags_city'),
+             InlineKeyboardButton("feath., wings 🦢", callback_data='moreTags_feathWings'),
+             InlineKeyboardButton("cave", callback_data='moreTags_cave')],
+            [InlineKeyboardButton("spread wings 🦇", callback_data='moreTags_spreadWings'),
+             InlineKeyboardButton("breasts", callback_data='moreTags_breasts'),
+             InlineKeyboardButton("simple background 👩‍❤️‍💋‍👨", callback_data='moreTags_simpleBackground')],
+            [InlineKeyboardButton("mane 🦄", callback_data='moreTags_mane'),
              InlineKeyboardButton("cloud ☁️", callback_data='moreTags_cloud'),
              InlineKeyboardButton("fire 🔥", callback_data='moreTags_fire'),
              InlineKeyboardButton("mlp 🐴", callback_data='moreTags_mlp')],
             [InlineKeyboardButton("forest 🌳", callback_data='moreTags_forest'),
              InlineKeyboardButton("mountain ⛰", callback_data='moreTags_mountain'),
-             InlineKeyboardButton("night 🌃", callback_data='moreTags_night')],
-            [InlineKeyboardButton("sea 💧", callback_data='moreTags_sea'),
+             InlineKeyboardButton("food 🥡", callback_data='moreTags_food')],
+            [InlineKeyboardButton("sea", callback_data='moreTags_sea'),
              InlineKeyboardButton("sky 🎈", callback_data='moreTags_sky'),
-             InlineKeyboardButton("space 🛸", callback_data='moreTags_space')],
+             InlineKeyboardButton("group ", callback_data='moreTags_group')],
             [InlineKeyboardButton("stars ✨", callback_data='moreTags_stars'),
-             InlineKeyboardButton("male", callback_data='moreTags_male'),
-             InlineKeyboardButton("female", callback_data='moreTags_female')],
-            [InlineKeyboardButton("herm", callback_data='moreTags_herm'),
-             InlineKeyboardButton("breasts", callback_data='moreTags_breasts'),
-             InlineKeyboardButton("feath., wings 🦢", callback_data='moreTags_feathWings')],
-            [InlineKeyboardButton("humanized", callback_data='moreTags_humanized'),
+             InlineKeyboardButton("flying 🕊️", callback_data='moreTags_flying'),
+             InlineKeyboardButton("tail fluff 🦨", callback_data='moreTags_tailFluff')],
+            [InlineKeyboardButton("fur ", callback_data='moreTags_fur'),
              InlineKeyboardButton("furry", callback_data='moreTags_furry'),
-             InlineKeyboardButton("anthro", callback_data='moreTags_anthro'),
-             InlineKeyboardButton("human", callback_data='moreTags_human')],
-            [InlineKeyboardButton("END ✅", callback_data='moreTags_end')]
+             InlineKeyboardButton("anthro", callback_data='moreTags_anthro')],
+            [InlineKeyboardButton("human 🧍", callback_data='moreTags_human'),
+             InlineKeyboardButton("male ♂️", callback_data='moreTags_male'),
+             InlineKeyboardButton("female ♀️", callback_data='moreTags_female'),
+             InlineKeyboardButton("herm ⚥", callback_data='moreTags_herm')],
+            [InlineKeyboardButton("MoreTags ➡️", callback_data='moreTags_moreTags2'),
+            InlineKeyboardButton("END ✅", callback_data='moreTags_end')]
         ]
-        if (msgType[0] != 'moreTags'):
+        if (msgType[0] != 'moreTags'  and msgType[1]!='end'):
             reply_markup = InlineKeyboardMarkup(keyboard)
             query.edit_message_text(
                 "Продолжаем. Вот еще кучка популярных тегов. Что бы закончить жми END ✅", reply_markup=reply_markup)
-    if (msgType[0] == 'moreTags' and msgType[1] == 'end'):
+
+    # второй выбор
+    if (msgType[1] == 'moreTags2' or msgType[0] == 'moreTags2'):
+        if (msgType[1] != 'end' and msgType[1] != 'moreTags3' and msgType[1] != 'moreTags2'):
+            db.insertAnswer(tagColumnId,  msgType[1])
+        keyboard = [
+            [InlineKeyboardButton("hair", callback_data='moreTags2_hair'),
+             InlineKeyboardButton("photo 📷", callback_data='moreTags2_photo'),
+             InlineKeyboardButton("tradi;art", callback_data='moreTags2_tradArt'),
+             InlineKeyboardButton("transp; background", callback_data='moreTags2_transparentBackground')],
+            [InlineKeyboardButton("animated", callback_data='moreTags2_animated'),
+             InlineKeyboardButton("sketch", callback_data='moreTags2_sketch'),
+             InlineKeyboardButton("river 🏞️", callback_data='moreTags2_river')],
+            [InlineKeyboardButton("city 🌆", callback_data='moreTags2_city'),
+             InlineKeyboardButton("nipples", callback_data='moreTags2_nipples'),
+             InlineKeyboardButton("monochrome", callback_data='moreTags2_monochrome'),
+             InlineKeyboardButton("text", callback_data='moreTags2_text')],
+            [InlineKeyboardButton("flower 🌹", callback_data='moreTags2_flower'),
+             InlineKeyboardButton("portrait", callback_data='moreTags2_portrait'),
+             InlineKeyboardButton("moon 🌙", callback_data='moreTags2_moon')],
+            [InlineKeyboardButton("building 🏢", callback_data='moreTags2_building'),
+             InlineKeyboardButton("book", callback_data='moreTags2_book'),
+             InlineKeyboardButton("weapon", callback_data='moreTags2_weapon')],
+            [InlineKeyboardButton("headphones 🎧", callback_data='moreTags2_headphones'),
+             InlineKeyboardButton("no wings", callback_data='moreTags2_noWings'),
+             InlineKeyboardButton("humanized", callback_data='moreTags2_female')],
+            [InlineKeyboardButton("kissing", callback_data='moreTags2_herm'),
+             InlineKeyboardButton("hug", callback_data='moreTags2_breasts'),
+             InlineKeyboardButton("tree", callback_data='moreTags2_feathWings')],
+            [InlineKeyboardButton("clothes 👚", callback_data='moreTags2_humanized'),
+             InlineKeyboardButton("grass 🌿", callback_data='moreTags2_furry'),
+             InlineKeyboardButton("morning", callback_data='moreTags2_anthro'),
+             InlineKeyboardButton("human", callback_data='moreTags2_human')],
+            [InlineKeyboardButton("Prev ⬅️", callback_data='rating_prev'),
+                InlineKeyboardButton("MoreTags ➡️", callback_data='moreTags_moreTags3'),
+            InlineKeyboardButton("END ✅", callback_data='moreTags_end')]
+        ]
+
+        if (msgType[0] != 'moreTags2' and msgType[1] =='moreTags2'  ):
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            query.edit_message_text(
+                "Есть еще кучка тегов дальше➡️. Что бы закончить жми END ✅", reply_markup=reply_markup)
+
+    # третий выбор
+    if (msgType[1] == 'moreTags3' or msgType[0] == 'moreTags3'):
+        if (msgType[1] != 'end' and msgType[1] != 'moreTags3' and msgType[1] != 'moreTags2'):
+            db.insertAnswer(tagColumnId,  msgType[1])
+        keyboard = [
+            [InlineKeyboardButton("morning 🌅", callback_data='moreTags3_morning'),
+             InlineKeyboardButton("lying down 🛏️", callback_data='moreTags3_lyingDown'),
+             InlineKeyboardButton("lying on nack", callback_data='moreTags3_lyingOnBack'),
+             InlineKeyboardButton("evening", callback_data='moreTags3_evening')],
+            [InlineKeyboardButton("sun", callback_data='moreTags3_sun'),
+             InlineKeyboardButton("moon", callback_data='moreTags3_moon'),
+             InlineKeyboardButton("plain", callback_data='moreTags3_plain')],
+            [InlineKeyboardButton("coast 🌴", callback_data='moreTags3_coast'),
+             InlineKeyboardButton("winter", callback_data='moreTags3_winter'),
+             InlineKeyboardButton("summer", callback_data='moreTags3_summer'),
+             InlineKeyboardButton("spring", callback_data='moreTags3_spring')],
+            [InlineKeyboardButton("fall", callback_data='moreTags3_fall'),
+             InlineKeyboardButton("flying", callback_data='moreTags3_flying'),
+             InlineKeyboardButton("lies", callback_data='moreTags3_lies')],
+            [InlineKeyboardButton("stretching", callback_data='moreTags3_stretching'),
+             InlineKeyboardButton("jump", callback_data='moreTags3_jump'),
+             InlineKeyboardButton("game", callback_data='moreTags3_game')],
+            [InlineKeyboardButton("playing", callback_data='moreTags3_playing'),
+             InlineKeyboardButton("cooking", callback_data='moreTags3_cooking'),
+             InlineKeyboardButton("space 🌌", callback_data='moreTags3_space')],
+            [InlineKeyboardButton("night", callback_data='moreTags3_night'),
+             InlineKeyboardButton("dance 💃", callback_data='moreTags3_dance'),
+             InlineKeyboardButton("tree", callback_data='moreTags3_tree'),
+            InlineKeyboardButton("sitting 🪑", callback_data='moreTags3_sitting')],
+            [InlineKeyboardButton("Prev ⬅️", callback_data='moreTags_moreTags2'),
+            InlineKeyboardButton("END ✅", callback_data='moreTags_end')]
+        ]
+
+        if (msgType[0] != 'moreTags3' and msgType[1] =='moreTags3'  ):
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            query.edit_message_text(
+                "Продолжаем. Вот еще кучка популярных тегов. Что бы закончить жми END ✅", reply_markup=reply_markup)
+    # конец выбора
+    if (msgType[1] == 'end'):
         tagList = db.getAnswers(tagColumnId)
         APIdrakony.imgSend(imgUrlFromReply, tagList, fromUserSenderIName)
         philomenaUrl=""
@@ -192,12 +274,21 @@ def dragonOnImageQuestion(update, context):
 
         disablePreview = False
         for val in tagList:
-            finTag = tags.getFullTageName(val)
+            tag = tags.getFullTageName(val)
+            if  not tag:
+                continue
+            finTag = tag
             finTag = finTag.replace(' ', '_')
             finTag = "#"+finTag.replace(':', '_')
             if (finTag == "#questionable" or finTag == "#explicit"):
                 finTag+="🔞"
                 disablePreview = True
+            if (finTag == "#male"):
+                finTag += "♂️"
+            if (finTag == "#female"):
+                finTag += "♀️"
+            if (finTag == "#herm"):
+                finTag += "⚥"
             tagsString += finTag+'   '
 
         replyMsgText += '\n '
