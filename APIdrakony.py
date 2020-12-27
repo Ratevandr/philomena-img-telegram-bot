@@ -24,13 +24,14 @@ def imgSearch(imgUrl):
     jsonData = json.loads(data)
 
     finalImgUrl = {
-        'Url':'',
-        'Tags':''
+        'Url': '',
+        'Tags': ''
     }
- 
+
     if ("total" in jsonData):
         if (jsonData["total"] > 0):
-            urlToPhilomena = philomenaUrl+"/images/"+str(jsonData["images"][0]["id"])
+            urlToPhilomena = philomenaUrl+"/images/" + \
+                str(jsonData["images"][0]["id"])
             finalImgUrl['UrlToPhilomena'] = urlToPhilomena
             finalImgUrl['Url'] = philomenaUrl + \
                 jsonData["images"][0]["representations"]["full"]
@@ -38,18 +39,18 @@ def imgSearch(imgUrl):
                 finTag = tag.replace(' ', '_')
                 finTag = finTag.replace(':', '_')
                 if (finTag == "questionable" or finTag == "explicit"):
-                    finTag+="🔞"
+                    finTag += "🔞"
                 if (finTag == "male"):
-                    finTag+="♂️"
+                    finTag += "♂️"
                 if (finTag == "female"):
-                    finTag+="♀️"
+                    finTag += "♀️"
                 if (finTag == "herm"):
-                    finTag+="⚥"
+                    finTag += "⚥"
                 finalImgUrl['Tags'] += " #"+finTag
             if jsonData["images"] and jsonData["images"][0] and jsonData["images"][0]["description"]:
                 desc = jsonData["images"][0]["description"]
-                desc = desc.replace('@',' ')
-                finalImgUrl['Tags']  += " \n"+desc
+                desc = desc.replace('@', ' ')
+                finalImgUrl['Tags'] += " \n"+desc
             return finalImgUrl
         return ""
     return ""
@@ -62,7 +63,6 @@ def imgSend(imgUrl, tagsList, author):
 
     philomenaUrl = config["philomena-url"]
     philomenaKey = config["philomena-key"]
- 
 
     URL = philomenaUrl+"/api/v1/json/images?key="+philomenaKey
     realImgUrl = ""
@@ -72,16 +72,17 @@ def imgSend(imgUrl, tagsList, author):
         realImgUrl = deviantart.getImgUrlFromDeviantArt(imgUrl)
         deviantArtist = htmlUtil.getDeviantartArtist(imgUrl)
         if (deviantArtist):
-            tagsString+='artist:'+str(deviantArtist)+', '
+            tagsString += 'artist:'+str(deviantArtist)+', '
             sourceImgUrl = imgUrl
     else:
         if (htmlUtil.isFurraffinity(imgUrl)):
             furraffinityArtist = htmlUtil.getFurraffinityArtist(imgUrl)
             if (furraffinityArtist):
-                tagsString+='artist:'+str(furraffinityArtist)+', '
+                tagsString += 'artist:'+str(furraffinityArtist)+', '
                 tagsList.append('useless source url')
                 realImgUrl = imgUrl
-                sourceImgUrl = "https://www.furaffinity.net/user/"+str(furraffinityArtist)+"/"
+                sourceImgUrl = "https://www.furaffinity.net/user/" + \
+                    str(furraffinityArtist)+"/"
             else:
                 logging.error("Error getting furraffinity artist!")
         else:
@@ -90,7 +91,7 @@ def imgSend(imgUrl, tagsList, author):
             tagsList.append('source needed')
 
     for val in tagsList:
-        
+
         tagsString += tags.getFullTageName(val)+', '
 
     tagsString = tagsString[:-2]
@@ -123,3 +124,39 @@ def imgSend(imgUrl, tagsList, author):
         logging.error(f"Sended JSON {jsonDict}")
         return
     logging.info(f"Successful send img with url {realImgUrl}")
+
+
+def tagPopularity():
+    with open('config.json') as config_file:
+        config = json.load(config_file)
+
+    philomenaUrl = config["philomena-url"]
+    philomenaUrl = "https://art.drakony.net"
+
+    tagsArray = {}
+
+    for imageId in range(1, 3349):
+        print("Process "+str(imageId))
+
+        URL = philomenaUrl+"/api/v1/json/images/"+str(imageId)
+        response = requests.get(url=URL)
+        data = response.text
+        jsonData = json.loads(data)
+
+        if ("image" in jsonData):
+            if ("tags" in jsonData["image"]):
+                for key in jsonData["image"]["tags"]:
+
+                    if (key in tagsArray):
+                        tagsArray[key] = tagsArray[key]+1
+                    else:
+                        tagsArray[key] = 1
+    print(" ")
+
+    tagsArraySorted = dict(sorted(tagsArray.items(), key=lambda item: item[1], reverse=True))
+
+    tagFile = open("tag.csv", "w")
+    for key in tagsArraySorted:
+        print(key+" "+str(tagsArraySorted[key]))
+        tagFile.write(key+","+str(tagsArraySorted[key])+'\n')
+    tagFile.close()
