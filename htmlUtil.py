@@ -1,14 +1,35 @@
 import re
 from urllib.parse import urlparse
+import urllib
 import logging
-
+import uuid
+import filetype
+import os
+ 
+def downloadImage(imgUrl):
+    imgFileName=str(uuid.uuid4())
+    imgFileFullPath="tmpForImg/"+imgFileName+".png"
+    imgFile = open(imgFileFullPath,'wb')
+    imgFile.write(urllib.request.urlopen(imgUrl).read())
+    imgFile.close()
+    fileExtension = filetype.guess(imgFileFullPath).extension
+    newImgFileName = "tmpForImg/"+imgFileName+"."+fileExtension
+    
+    if (newImgFileName != imgFileFullPath):
+        os.rename(imgFileFullPath, newImgFileName)
+        imgFileFullPath = newImgFileName
+        print(imgFileFullPath)
+    returnImgStruct = {
+        'imgPath':imgFileFullPath,
+        'imgExtension':fileExtension
+    }
+    return returnImgStruct
 
 def isCorrectUrl(msgText):
     if (msgText):
         if (urlInWhiteList(msgText)):
             return True
     return False
-
 
 def isDeviantart(msgText):
     name = urlparse(msgText).hostname

@@ -7,6 +7,8 @@ import APIdrakony
 import db
 import tags
 import htmlUtil
+import os
+
 
 bot = 0
 # Enable logging
@@ -197,10 +199,26 @@ def echo(update, context):
             chatId = update.message.chat.id
             bot.delete_message(chatId, msgId)
             print(chatId)
-            if (imgUrlFromDrakony and (imgUrlFromDrakony.find('#explicit') != -1 or imgUrlFromDrakony.find('#questionable') != -1)): 
-                bot.send_message(chatId, imgUrlFromDrakony,  disable_web_page_preview=True)
+            if (imgUrlFromDrakony and (imgUrlFromDrakony['Tags'].find('#explicit') != -1 or imgUrlFromDrakony['Tags'].find('#questionable') != -1)): 
+                msgString = imgUrlFromDrakony['Url']+imgUrlFromDrakony['Tags']+'\nRef: '+imgUrlFromDrakony['UrlToPhilomena']
+                bot.send_message(chatId, msgString,  disable_web_page_preview=True)
             else:
-                bot.send_message(chatId, imgUrlFromDrakony)
+                bot.send_chat_action(chatId, 'upload_photo')
+                imgPath = htmlUtil.downloadImage(imgUrlFromDrakony['Url'])
+
+                imgFile = open(imgPath['imgPath'], 'rb')
+                if  imgPath['imgExtension']=='gif' or imgPath['imgExtension']=='webm' :
+                      msgCaptionStr = imgUrlFromDrakony['Tags']+'\nRef: '+imgUrlFromDrakony['UrlToPhilomena']
+                      bot.send_animation(chatId, imgFile, caption=msgCaptionStr)
+                else:
+                    msgCaptionStr = imgUrlFromDrakony['Tags']+'\nRef: '+imgUrlFromDrakony['UrlToPhilomena']
+                    bot.send_photo(chatId, imgFile, msgCaptionStr)
+
+                imgFile.close()
+                if os.path.exists(imgPath['imgPath']):
+                    os.remove(imgPath['imgPath'])
+                else:
+                    logging.error("File "+imgPath['imgPath']+" doesnt exist.")
         else:
  
             keyboard = [[InlineKeyboardButton("Да", callback_data='answ_true'),
@@ -209,7 +227,6 @@ def echo(update, context):
             reply_markup = InlineKeyboardMarkup(keyboard)
             update.message.reply_text(
                 "На изображении есть дракон?", reply_markup=reply_markup)
-
 
 def main():
     logging.info("Bot started")

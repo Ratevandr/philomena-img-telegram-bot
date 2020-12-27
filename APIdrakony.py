@@ -23,11 +23,17 @@ def imgSearch(imgUrl):
     data = response.text
     jsonData = json.loads(data)
 
+    finalImgUrl = {
+        'Url':'',
+        'Tags':''
+    }
+ 
     if ("total" in jsonData):
         if (jsonData["total"] > 0):
-            finalImgUrl = philomenaUrl + \
+            urlToPhilomena = philomenaUrl+"/images/"+str(jsonData["images"][0]["id"])
+            finalImgUrl['UrlToPhilomena'] = urlToPhilomena
+            finalImgUrl['Url'] = philomenaUrl + \
                 jsonData["images"][0]["representations"]["full"]
-            finalImgUrl += "  \n"
             for tag in jsonData["images"][0]["tags"]:
                 finTag = tag.replace(' ', '_')
                 finTag = finTag.replace(':', '_')
@@ -39,11 +45,11 @@ def imgSearch(imgUrl):
                     finTag+="♀️"
                 if (finTag == "herm"):
                     finTag+="⚥"
-                finalImgUrl += " #"+finTag
+                finalImgUrl['Tags'] += " #"+finTag
             if jsonData["images"] and jsonData["images"][0] and jsonData["images"][0]["description"]:
                 desc = jsonData["images"][0]["description"]
                 desc = desc.replace('@',' ')
-                finalImgUrl += " "+desc
+                finalImgUrl['Tags']  += " \n"+desc
             return finalImgUrl
         return ""
     return ""
