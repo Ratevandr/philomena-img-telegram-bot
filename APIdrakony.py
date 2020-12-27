@@ -37,6 +37,8 @@ def imgSearch(imgUrl):
                     finTag+="♂️"
                 if (finTag == "female"):
                     finTag+="♀️"
+                if (finTag == "herm"):
+                    finTag+="⚥"
                 finalImgUrl += " #"+finTag
             if jsonData["images"] and jsonData["images"][0] and jsonData["images"][0]["description"]:
                 desc = jsonData["images"][0]["description"]
