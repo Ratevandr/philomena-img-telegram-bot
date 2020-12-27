@@ -69,22 +69,54 @@ def dragonOnImageQuestion(update, context):
         keyboard = [
             [InlineKeyboardButton("black ⬛️", callback_data='color_black'),
              InlineKeyboardButton("blue 🟦", callback_data='color_blue'),
-             InlineKeyboardButton("purple 🟪", callback_data='color_purple')],
-            [InlineKeyboardButton("bronze 🥉", callback_data='color_bronze'),
+             InlineKeyboardButton("purple 🟪", callback_data='color_purple'),
+             InlineKeyboardButton("bronze 🥉", callback_data='color_bronze')],
+            [InlineKeyboardButton("yellow 🟨", callback_data='color_yellow'),
              InlineKeyboardButton("golden 🥇", callback_data='color_golden'),
              InlineKeyboardButton("green 🟢", callback_data='color_green'),
              InlineKeyboardButton("silver 🥈", callback_data='color_silver')],
             [InlineKeyboardButton("grey 🐭", callback_data='color_grey'),
              InlineKeyboardButton("red 🟥", callback_data='color_red'),
-             InlineKeyboardButton("white ⬜️", callback_data='color_white')],
-            [InlineKeyboardButton("yellow 🟨", callback_data='color_yellow'),
-             InlineKeyboardButton("rainbow 🌈", callback_data='color_rainbow'),
-             InlineKeyboardButton("other ❓", callback_data='color_other')]
+             InlineKeyboardButton("white ⬜️", callback_data='color_white'),
+             InlineKeyboardButton("rainbow 🌈", callback_data='color_rainbow')],
+            [
+             InlineKeyboardButton("other ❓", callback_data='color_other'),
+             InlineKeyboardButton("SecondColor ➡️🌈", callback_data='color_secondColor'),
+             InlineKeyboardButton("Next ➡️", callback_data='color_nextTag')]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         query.edit_message_text("Молодец :3 Теперь выбери цвет.", reply_markup=reply_markup)
-    if (msgType[0] == 'color'):
+    
+    if (msgType[0]=='color'  and  msgType[1]!='nextTag' and  msgType[1]!='secondColor') :
         db.insertAnswer(tagColumnId,  msgType[1])
+
+    if (msgType[0]=='color'  and  msgType[1]=='secondColor') :
+        keyboard = [
+            [InlineKeyboardButton("black ⬛️", callback_data='secondColor_scblack'),
+             InlineKeyboardButton("blue 🟦", callback_data='secondColor_scblue'),
+             InlineKeyboardButton("purple 🟪", callback_data='secondColor_scpurple'),
+             InlineKeyboardButton("bronze 🥉", callback_data='secondColor_scbronze')],
+            [InlineKeyboardButton("yellow 🟨", callback_data='secondColor_scyellow'),
+             InlineKeyboardButton("golden 🥇", callback_data='secondColor_scgolden'),
+             InlineKeyboardButton("green 🟢", callback_data='secondColor_scgreen'),
+             InlineKeyboardButton("silver 🥈", callback_data='secondColor_scsilver')],
+            [InlineKeyboardButton("grey 🐭", callback_data='secondColor_scgrey'),
+             InlineKeyboardButton("red 🟥", callback_data='secondColor_srsced'),
+             InlineKeyboardButton("white ⬜️", callback_data='secondColor_scwhite'),
+             InlineKeyboardButton("rainbow 🌈", callback_data='secondColor_scrainbow')],
+        [
+             InlineKeyboardButton("other ❓", callback_data='secondColor_scother'),
+             InlineKeyboardButton("Next ➡️", callback_data='color_nextTag')]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        query.edit_message_text(
+            "Выбирай дополнительные цвета.", reply_markup=reply_markup)
+
+    if (msgType[0] == 'secondColor'):
+        db.insertAnswer(tagColumnId,  msgType[1])
+
+    if (msgType[0] == 'color' and msgType[1]=='nextTag'):
+        
         keyboard = [
             [InlineKeyboardButton("safe ✅", callback_data='rating_safe'),
              InlineKeyboardButton(
