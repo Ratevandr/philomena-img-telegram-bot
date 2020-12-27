@@ -31,6 +31,12 @@ def imgSearch(imgUrl):
             for tag in jsonData["images"][0]["tags"]:
                 finTag = tag.replace(' ', '_')
                 finTag = finTag.replace(':', '_')
+                if (finTag == "questionable" or finTag == "explicit"):
+                    finTag+="🔞"
+                if (finTag == "male"):
+                    finTag+="♂️"
+                if (finTag == "female"):
+                    finTag+="♀️"
                 finalImgUrl += " #"+finTag
             if jsonData["images"] and jsonData["images"][0] and jsonData["images"][0]["description"]:
                 desc = jsonData["images"][0]["description"]
