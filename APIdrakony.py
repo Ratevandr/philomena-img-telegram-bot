@@ -91,8 +91,10 @@ def imgSend(imgUrl, tagsList, author):
             tagsList.append('source needed')
 
     for val in tagsList:
-
-        tagsString += tags.getFullTageName(val)+', '
+        tag =  tags.getFullTageName(val)
+        if  not tag:
+            continue
+        tagsString +=tag+', '
 
     tagsString = tagsString[:-2]
 
