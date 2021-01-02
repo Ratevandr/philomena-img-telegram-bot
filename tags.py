@@ -20,7 +20,7 @@ tagsDit = {
     "other": "color:other",
     "scblack": "multicolor:black",
     "scblue": "multicolor:blue",
-    "scbronze": "cmultiolor:bronze",
+    "scbronze": "multiсolor:bronze",
     "scgolden": "multicolor:golden",
     "scgreen": "multicolor:green",
     "scsilver": "multicolor:silver",
