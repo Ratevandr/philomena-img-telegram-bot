@@ -1,6 +1,7 @@
 import logging
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
+import tagKeyboard
 import re
 import json
 import APIdrakony
@@ -51,39 +52,13 @@ def dragonOnImageQuestion(update, context):
 
     if (msgType[0] == 'answ'):
 
-        keyboard = [
-            [InlineKeyboardButton(
-                "eastern dragon", callback_data='tag_eastern')],
-            [InlineKeyboardButton(
-                "western dragon", callback_data='tag_western')],
-            [InlineKeyboardButton("wyvern", callback_data='tag_wyvern')],
-            [InlineKeyboardButton("serpent", callback_data='tag_serpent')],
-            [InlineKeyboardButton("hydra", callback_data='tag_hydra')],
-            [InlineKeyboardButton(
-                "amphiptere", callback_data='tag_amphiptere')]
-        ]
+        keyboard = tagKeyboard.updateKeyboard(1,1)
         reply_markup = InlineKeyboardMarkup(keyboard)
+        print(keyboard)
         query.edit_message_text("Выберите теги.", reply_markup=reply_markup)
     if (msgType[0] == 'tag'):
         db.insertAnswer(tagColumnId,  msgType[1])
-        keyboard = [
-            [InlineKeyboardButton("black ⬛️", callback_data='color_black'),
-             InlineKeyboardButton("blue 🟦", callback_data='color_blue'),
-             InlineKeyboardButton("purple 🟪", callback_data='color_purple'),
-             InlineKeyboardButton("bronze 🥉", callback_data='color_bronze')],
-            [InlineKeyboardButton("yellow 🟨", callback_data='color_yellow'),
-             InlineKeyboardButton("golden 🥇", callback_data='color_golden'),
-             InlineKeyboardButton("green 🟢", callback_data='color_green'),
-             InlineKeyboardButton("silver 🥈", callback_data='color_silver')],
-            [InlineKeyboardButton("grey 🐭", callback_data='color_grey'),
-             InlineKeyboardButton("red 🟥", callback_data='color_red'),
-             InlineKeyboardButton("white ⬜️", callback_data='color_white'),
-             InlineKeyboardButton("rainbow 🌈", callback_data='color_rainbow')],
-            [
-             InlineKeyboardButton("other ❓", callback_data='color_other'),
-             InlineKeyboardButton("SecondColor ➡️🌈", callback_data='color_secondColor'),
-             InlineKeyboardButton("Next ➡️", callback_data='color_nextTag')]
-        ]
+        keyboard =  tagKeyboard.updateKeyboard(2,3)
         reply_markup = InlineKeyboardMarkup(keyboard)
         query.edit_message_text("Молодец :3 Теперь выбери цвет.", reply_markup=reply_markup)
     
@@ -91,23 +66,7 @@ def dragonOnImageQuestion(update, context):
         db.insertAnswer(tagColumnId,  msgType[1])
 
     if (msgType[0]=='color'  and  msgType[1]=='secondColor') :
-        keyboard = [
-            [InlineKeyboardButton("black ⬛️", callback_data='secondColor_scblack'),
-             InlineKeyboardButton("blue 🟦", callback_data='secondColor_scblue'),
-             InlineKeyboardButton("purple 🟪", callback_data='secondColor_scpurple'),
-             InlineKeyboardButton("bronze 🥉", callback_data='secondColor_scbronze')],
-            [InlineKeyboardButton("yellow 🟨", callback_data='secondColor_scyellow'),
-             InlineKeyboardButton("golden 🥇", callback_data='secondColor_scgolden'),
-             InlineKeyboardButton("green 🟢", callback_data='secondColor_scgreen'),
-             InlineKeyboardButton("silver 🥈", callback_data='secondColor_scsilver')],
-            [InlineKeyboardButton("grey 🐭", callback_data='secondColor_scgrey'),
-             InlineKeyboardButton("red 🟥", callback_data='secondColor_scred'),
-             InlineKeyboardButton("white ⬜️", callback_data='secondColor_scwhite'),
-             InlineKeyboardButton("rainbow 🌈", callback_data='secondColor_scrainbow')],
-        [
-             InlineKeyboardButton("other ❓", callback_data='secondColor_scother'),
-             InlineKeyboardButton("Next ➡️", callback_data='color_nextTag')]
-        ]
+        keyboard =  tagKeyboard.updateKeyboard(3,3)
         reply_markup = InlineKeyboardMarkup(keyboard)
         query.edit_message_text(
             "Выбирай дополнительные цвета.", reply_markup=reply_markup)
@@ -117,50 +76,14 @@ def dragonOnImageQuestion(update, context):
 
     if (msgType[0] == 'color' and msgType[1]=='nextTag'):
         
-        keyboard = [
-            [InlineKeyboardButton("safe ✅", callback_data='rating_safe'),
-             InlineKeyboardButton(
-                 "suggestive 😏", callback_data='rating_suggestive'),
-             InlineKeyboardButton(
-                 "questionable ❔", callback_data='rating_questionable'),
-             InlineKeyboardButton("explicit 🔞", callback_data='rating_explicit')]
-        ]
+        keyboard =  tagKeyboard.updateKeyboard(4,1)
         reply_markup = InlineKeyboardMarkup(keyboard)
         query.edit_message_text(
             "А ты хорош :3 Теперь выбери рейтинг.", reply_markup=reply_markup)
     if (msgType[0] == 'rating' or msgType[0] == 'moreTags'):
         if (msgType[1] != 'end' and msgType[1] != 'moreTags2' and msgType[1] != 'prev'):
             db.insertAnswer(tagColumnId,  msgType[1])
-        keyboard = [
-            [InlineKeyboardButton("solo", callback_data='moreTags_solo'),
-             InlineKeyboardButton("feath., wings 🦢", callback_data='moreTags_feathWings'),
-             InlineKeyboardButton("cave", callback_data='moreTags_cave')],
-            [InlineKeyboardButton("spread wings 🦇", callback_data='moreTags_spreadWings'),
-             InlineKeyboardButton("breasts", callback_data='moreTags_breasts'),
-             InlineKeyboardButton("simple background 👩‍❤️‍💋‍👨", callback_data='moreTags_simpleBackground')],
-            [InlineKeyboardButton("mane 🦄", callback_data='moreTags_mane'),
-             InlineKeyboardButton("cloud ☁️", callback_data='moreTags_cloud'),
-             InlineKeyboardButton("fire 🔥", callback_data='moreTags_fire'),
-             InlineKeyboardButton("mlp 🐴", callback_data='moreTags_mlp')],
-            [InlineKeyboardButton("forest 🌳", callback_data='moreTags_forest'),
-             InlineKeyboardButton("mountain ⛰", callback_data='moreTags_mountain'),
-             InlineKeyboardButton("food 🥡", callback_data='moreTags_food')],
-            [InlineKeyboardButton("sea", callback_data='moreTags_sea'),
-             InlineKeyboardButton("sky 🎈", callback_data='moreTags_sky'),
-             InlineKeyboardButton("group ", callback_data='moreTags_group')],
-            [InlineKeyboardButton("stars ✨", callback_data='moreTags_stars'),
-             InlineKeyboardButton("flying 🕊️", callback_data='moreTags_flying'),
-             InlineKeyboardButton("tail fluff 🦨", callback_data='moreTags_tailFluff')],
-            [InlineKeyboardButton("fur ", callback_data='moreTags_fur'),
-             InlineKeyboardButton("furry", callback_data='moreTags_furry'),
-             InlineKeyboardButton("anthro", callback_data='moreTags_anthro')],
-            [InlineKeyboardButton("human 🧍", callback_data='moreTags_human'),
-             InlineKeyboardButton("male ♂️", callback_data='moreTags_male'),
-             InlineKeyboardButton("female ♀️", callback_data='moreTags_female'),
-             InlineKeyboardButton("herm ⚥", callback_data='moreTags_herm')],
-            [InlineKeyboardButton("MoreTags ➡️", callback_data='moreTags_moreTags2'),
-            InlineKeyboardButton("END ✅", callback_data='moreTags_end')]
-        ]
+        keyboard =  tagKeyboard.updateKeyboard(5,3)
         if (msgType[0] != 'moreTags'  and msgType[1]!='end'):
             reply_markup = InlineKeyboardMarkup(keyboard)
             query.edit_message_text(
@@ -170,38 +93,7 @@ def dragonOnImageQuestion(update, context):
     if (msgType[1] == 'moreTags2' or msgType[0] == 'moreTags2'):
         if (msgType[1] != 'end' and msgType[1] != 'moreTags3' and msgType[1] != 'moreTags2'):
             db.insertAnswer(tagColumnId,  msgType[1])
-        keyboard = [
-            [InlineKeyboardButton("hair", callback_data='moreTags2_hair'),
-             InlineKeyboardButton("photo 📷", callback_data='moreTags2_photo'),
-             InlineKeyboardButton("tradi;art", callback_data='moreTags2_tradArt'),
-             InlineKeyboardButton("transp; background", callback_data='moreTags2_transparentBackground')],
-            [InlineKeyboardButton("animated", callback_data='moreTags2_animated'),
-             InlineKeyboardButton("sketch", callback_data='moreTags2_sketch'),
-             InlineKeyboardButton("river 🏞️", callback_data='moreTags2_river')],
-            [InlineKeyboardButton("city 🌆", callback_data='moreTags2_city'),
-             InlineKeyboardButton("nipples", callback_data='moreTags2_nipples'),
-             InlineKeyboardButton("monochrome", callback_data='moreTags2_monochrome'),
-             InlineKeyboardButton("text", callback_data='moreTags2_text')],
-            [InlineKeyboardButton("flower 🌹", callback_data='moreTags2_flower'),
-             InlineKeyboardButton("portrait", callback_data='moreTags2_portrait'),
-             InlineKeyboardButton("moon 🌙", callback_data='moreTags2_moon')],
-            [InlineKeyboardButton("building 🏢", callback_data='moreTags2_building'),
-             InlineKeyboardButton("book", callback_data='moreTags2_book'),
-             InlineKeyboardButton("weapon", callback_data='moreTags2_weapon')],
-            [InlineKeyboardButton("headphones 🎧", callback_data='moreTags2_headphones'),
-             InlineKeyboardButton("no wings", callback_data='moreTags2_noWings'),
-             InlineKeyboardButton("humanized", callback_data='moreTags2_female')],
-            [InlineKeyboardButton("kissing", callback_data='moreTags2_herm'),
-             InlineKeyboardButton("hug", callback_data='moreTags2_breasts'),
-             InlineKeyboardButton("tree", callback_data='moreTags2_feathWings')],
-            [InlineKeyboardButton("clothes 👚", callback_data='moreTags2_humanized'),
-             InlineKeyboardButton("grass 🌿", callback_data='moreTags2_furry'),
-             InlineKeyboardButton("morning", callback_data='moreTags2_anthro'),
-             InlineKeyboardButton("human", callback_data='moreTags2_human')],
-            [InlineKeyboardButton("Prev ⬅️", callback_data='rating_prev'),
-                InlineKeyboardButton("MoreTags ➡️", callback_data='moreTags_moreTags3'),
-            InlineKeyboardButton("END ✅", callback_data='moreTags_end')]
-        ]
+        keyboard =  tagKeyboard.updateKeyboard(6,3)
 
         if (msgType[0] != 'moreTags2' and msgType[1] =='moreTags2'  ):
             reply_markup = InlineKeyboardMarkup(keyboard)
@@ -212,34 +104,7 @@ def dragonOnImageQuestion(update, context):
     if (msgType[1] == 'moreTags3' or msgType[0] == 'moreTags3'):
         if (msgType[1] != 'end' and msgType[1] != 'moreTags3' and msgType[1] != 'moreTags2'):
             db.insertAnswer(tagColumnId,  msgType[1])
-        keyboard = [
-            [InlineKeyboardButton("morning 🌅", callback_data='moreTags3_morning'),
-             InlineKeyboardButton("lying down 🛏️", callback_data='moreTags3_lyingDown'),
-             InlineKeyboardButton("lying on nack", callback_data='moreTags3_lyingOnBack'),
-             InlineKeyboardButton("evening", callback_data='moreTags3_evening')],
-            [InlineKeyboardButton("sun", callback_data='moreTags3_sun'),
-             InlineKeyboardButton("moon", callback_data='moreTags3_moon'),
-             InlineKeyboardButton("plain", callback_data='moreTags3_plain')],
-            [InlineKeyboardButton("coast 🌴", callback_data='moreTags3_coast'),
-             InlineKeyboardButton("winter", callback_data='moreTags3_winter'),
-             InlineKeyboardButton("summer", callback_data='moreTags3_summer'),
-             InlineKeyboardButton("spring", callback_data='moreTags3_spring')],
-            [InlineKeyboardButton("fall", callback_data='moreTags3_fall'),
-             InlineKeyboardButton("flying", callback_data='moreTags3_flying'),
-             InlineKeyboardButton("lies", callback_data='moreTags3_lies')],
-            [InlineKeyboardButton("stretching", callback_data='moreTags3_stretching'),
-             InlineKeyboardButton("jump", callback_data='moreTags3_jump'),
-             InlineKeyboardButton("game", callback_data='moreTags3_game')],
-            [InlineKeyboardButton("playing", callback_data='moreTags3_playing'),
-             InlineKeyboardButton("cooking", callback_data='moreTags3_cooking'),
-             InlineKeyboardButton("space 🌌", callback_data='moreTags3_space')],
-            [InlineKeyboardButton("night", callback_data='moreTags3_night'),
-             InlineKeyboardButton("dance 💃", callback_data='moreTags3_dance'),
-             InlineKeyboardButton("tree", callback_data='moreTags3_tree'),
-            InlineKeyboardButton("sitting 🪑", callback_data='moreTags3_sitting')],
-            [InlineKeyboardButton("Prev ⬅️", callback_data='moreTags_moreTags2'),
-            InlineKeyboardButton("END ✅", callback_data='moreTags_end')]
-        ]
+        keyboard =  tagKeyboard.updateKeyboard(7,3)
 
         if (msgType[0] != 'moreTags3' and msgType[1] =='moreTags3'  ):
             reply_markup = InlineKeyboardMarkup(keyboard)
