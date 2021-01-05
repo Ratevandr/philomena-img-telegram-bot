@@ -61,6 +61,14 @@ def insertAnswer(keyID, answer):
     except Exception as err:
         logging.warn(f"Most likely the field {answer} already exists. Error {err}")
 
+def deleteTag(msgID, grouID, tagName):
+    conn = sqlite3.connect("botDB.db")
+    cursor = conn.cursor()
+ 
+    searchedMsgId = searchMsgWithImgID(msgID, grouID)
+    cursor.execute(
+        """DELETE FROM answers WHERE id=? AND answer=?""", (searchedMsgId,tagName,))
+    conn.commit()
 
 def deleteOnKind(msgID, grouID):
     conn = sqlite3.connect("botDB.db")

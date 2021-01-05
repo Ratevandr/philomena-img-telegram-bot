@@ -12,6 +12,7 @@ import os
 
 
 bot = 0
+artGalleryUrl = ""
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -38,80 +39,72 @@ def dragonOnImageQuestion(update, context):
     replyMsgText = update.callback_query.message.reply_to_message.text
     imgUrlFromReply = htmlUtil.extractUrlFromString(replyMsgText)
     tagColumnId = db.searchMsgWithImgID(msgId,  groupId)
+    msgId = update.callback_query.message.reply_to_message.message_id
+    chatId = update.callback_query.message.chat.id
 
     query = update.callback_query
     query.answer()
-    msgType = query.data
-    msgType = msgType.split('_')
+    msgType = eval(query.data)
+    receivedTagListNum =  int(msgType["tagsListNumber"])
+    msgType = msgType["tag"].split('_')
+
     if (len(msgType) < 2):
         return
 
-    if (msgType[0] == 'answ' and msgType[1] == 'false'):
-        bot.delete_message(groupId, msgId)
-        return
-
-    if (msgType[0] == 'answ'):
-
-        keyboard = tagKeyboard.updateKeyboard(1,1)
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        print(keyboard)
-        query.edit_message_text("Выберите теги.", reply_markup=reply_markup)
-    if (msgType[0] == 'tag'):
-        db.insertAnswer(tagColumnId,  msgType[1])
-        keyboard =  tagKeyboard.updateKeyboard(2,3)
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        query.edit_message_text("Молодец :3 Теперь выбери цвет.", reply_markup=reply_markup)
-    
-    if (msgType[0]=='color'  and  msgType[1]!='nextTag' and  msgType[1]!='secondColor') :
-        db.insertAnswer(tagColumnId,  msgType[1])
-
-    if (msgType[0]=='color'  and  msgType[1]=='secondColor') :
-        keyboard =  tagKeyboard.updateKeyboard(3,3)
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        query.edit_message_text(
-            "Выбирай дополнительные цвета.", reply_markup=reply_markup)
-
-    if (msgType[0] == 'secondColor'):
-        db.insertAnswer(tagColumnId,  msgType[1])
-
-    if (msgType[0] == 'color' and msgType[1]=='nextTag'):
+    if (msgType[1] != 'end'): # false only tag is servce_end
+        if (msgType[0] == 'answ' and msgType[1] == 'false'):
+            bot.delete_message(groupId, msgId)
+            return
         
-        keyboard =  tagKeyboard.updateKeyboard(4,1)
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        query.edit_message_text(
-            "А ты хорош :3 Теперь выбери рейтинг.", reply_markup=reply_markup)
-    if (msgType[0] == 'rating' or msgType[0] == 'moreTags'):
-        if (msgType[1] != 'end' and msgType[1] != 'moreTags2' and msgType[1] != 'prev'):
-            db.insertAnswer(tagColumnId,  msgType[1])
-        keyboard =  tagKeyboard.updateKeyboard(5,3)
-        if (msgType[0] != 'moreTags'  and msgType[1]!='end'):
+        if (msgType[0] != 'service'):
+            if (receivedTagListNum == 4): # 4 - rating. Tag was be unique
+                tagList = db.getAnswers(tagColumnId)
+                for tag in tagList:
+                    if tag == "safe" or tag == "suggestive" or tag == "questionable" or tag == "explicit":
+                         db.deleteTag(chatId, msgId,tag)
+                db.insertAnswer(tagColumnId,  msgType[1])
+
+            else:
+                db.insertAnswer(tagColumnId,  msgType[1])
+
+        if (msgType[0] == 'service'):
+            keyboardMessageString = ""
+            num = 0
+            buttonInLine = 0
+            if (msgType[1] == 'next'):
+                num = receivedTagListNum + 1
+            elif (msgType[1] == 'prev'):
+                num = receivedTagListNum  - 1
+
+            if num == 1:
+                keyboardMessageString = "Выберите теги"
+                buttonInLine = 1
+            elif num == 2:
+                keyboardMessageString = "Молодец :3 Теперь выбери цвет."
+                buttonInLine = 3
+            elif num == 3:
+                keyboardMessageString = "Выбирай ❗➡️ДОПОЛНИТЕЛЬНЫЕ⬅️❗ цвета"
+                buttonInLine = 3
+            elif num == 4:
+                keyboardMessageString = "А ты хорош :3 Теперь выбери рейтинг"
+                buttonInLine = 4
+            elif num == 5:
+                keyboardMessageString = "Продолжаем. Вот еще кучка популярных тегов. Что бы закончить жми END ✅"
+                buttonInLine = 3
+            elif num == 6:
+                keyboardMessageString = "Есть еще кучка тегов дальше➡️. Что бы закончить жми END ✅"
+                buttonInLine = 3
+            elif num == 7:
+                keyboardMessageString = "Молодец! А теперь можно перейти в галерею"
+                buttonInLine = 3
+
+
+            keyboard =  tagKeyboard.updateKeyboard(num, buttonInLine)
             reply_markup = InlineKeyboardMarkup(keyboard)
-            query.edit_message_text(
-                "Продолжаем. Вот еще кучка популярных тегов. Что бы закончить жми END ✅", reply_markup=reply_markup)
+            query.edit_message_text(keyboardMessageString, reply_markup=reply_markup)
 
-    # второй выбор
-    if (msgType[1] == 'moreTags2' or msgType[0] == 'moreTags2'):
-        if (msgType[1] != 'end' and msgType[1] != 'moreTags3' and msgType[1] != 'moreTags2'):
-            db.insertAnswer(tagColumnId,  msgType[1])
-        keyboard =  tagKeyboard.updateKeyboard(6,3)
-
-        if (msgType[0] != 'moreTags2' and msgType[1] =='moreTags2'  ):
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            query.edit_message_text(
-                "Есть еще кучка тегов дальше➡️. Что бы закончить жми END ✅", reply_markup=reply_markup)
-
-    # третий выбор
-    if (msgType[1] == 'moreTags3' or msgType[0] == 'moreTags3'):
-        if (msgType[1] != 'end' and msgType[1] != 'moreTags3' and msgType[1] != 'moreTags2'):
-            db.insertAnswer(tagColumnId,  msgType[1])
-        keyboard =  tagKeyboard.updateKeyboard(7,3)
-
-        if (msgType[0] != 'moreTags3' and msgType[1] =='moreTags3'  ):
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            query.edit_message_text(
-                "Продолжаем. Вот еще кучка популярных тегов. Что бы закончить жми END ✅", reply_markup=reply_markup)
     # конец выбора
-    if (msgType[1] == 'end'):
+    if (msgType[0] == 'service' and msgType[1] == 'end'):
         tagList = db.getAnswers(tagColumnId)
         APIdrakony.imgSend(imgUrlFromReply, tagList, fromUserSenderIName)
         philomenaUrl=""
@@ -123,8 +116,9 @@ def dragonOnImageQuestion(update, context):
             logging.error("Error read config file")
             return
 
+        # не уверен нужен ли callback
         keyboard = [[InlineKeyboardButton(
-            text="Молодец! А теперь можно перейти в галерею", url=philomenaUrl, callback_data="1")]]
+            text="Молодец! А теперь можно перейти в галерею", url=philomenaUrl)]]
         reply_markup = InlineKeyboardMarkup(keyboard)
 
         deviantArtist=""
@@ -159,9 +153,8 @@ def dragonOnImageQuestion(update, context):
         replyMsgText += '\n '
         replyMsgText += tagsString
         replyMsgText += "\n Отправлено: "+fromUserSenderIName
+        replyMsgText += "\n Галерея: "+artGalleryUrl
 
-        msgId = update.callback_query.message.reply_to_message.message_id
-        chatId = update.callback_query.message.chat.id
         bot.delete_message(chatId, msgId)
         bot.delete_message(chatId, update.callback_query.message.message_id)
 
@@ -197,7 +190,7 @@ def echo(update, context):
             msgId = update.message.message_id
             chatId = update.message.chat.id
             bot.delete_message(chatId, msgId)
-            print(chatId)
+
             if (imgUrlFromDrakony and (imgUrlFromDrakony['Tags'].find('#explicit') != -1 or imgUrlFromDrakony['Tags'].find('#questionable') != -1)): 
                 msgString = imgUrlFromDrakony['Url']+imgUrlFromDrakony['Tags']+'\nRef: '+imgUrlFromDrakony['UrlToPhilomena']
                 bot.send_message(chatId, msgString,  disable_web_page_preview=True)
@@ -220,8 +213,17 @@ def echo(update, context):
                     logging.error("File "+imgPath['imgPath']+" doesnt exist.")
         else:
  
-            keyboard = [[InlineKeyboardButton("Да", callback_data='answ_true'),
-                         InlineKeyboardButton("Нет", callback_data='answ_false')]]
+            callbackDataDictTrue = {
+            "tagsListNumber":0,
+            "tag":"service_next"
+            }
+            callbackDataDictFalse = {
+            "tagsListNumber":0,
+            "tag":"answ_false"
+            }
+
+            keyboard = [[InlineKeyboardButton("Да", callback_data=str(callbackDataDictTrue)),
+                         InlineKeyboardButton("Нет", callback_data=str(callbackDataDictFalse))]]
 
             reply_markup = InlineKeyboardMarkup(keyboard)
             update.message.reply_text(
@@ -235,6 +237,8 @@ def main():
     with open('config.json') as config_file:
         config = json.load(config_file)
 
+    global artGalleryUrl
+    artGalleryUrl = config["philomena-url"]
     token = config["telegram-bot-token"]
     updater = Updater(
         token, use_context=True)
