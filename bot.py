@@ -53,7 +53,7 @@ def dragonOnImageQuestion(update, context):
 
     if (msgType[1] != 'end'): # false only tag is servce_end
         if (msgType[0] == 'answ' and msgType[1] == 'false'):
-            bot.delete_message(groupId, msgId)
+            bot.delete_message(groupId, update.callback_query.message.message_id)
             return
         
         if (msgType[0] != 'service'):
@@ -173,6 +173,7 @@ def dragonOnImageQuestion(update, context):
 
 
 def echo(update, context):
+    print(update.message.chat.id)
     if (not update.message or not update.message.text):
         return
     if (not htmlUtil.isCorrectUrl(str(update.message.text))):
