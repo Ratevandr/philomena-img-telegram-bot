@@ -9,12 +9,23 @@ import os
 def downloadImage(imgUrl):
     imgFileName=str(uuid.uuid4())
     imgFileFullPath="tmpForImg/"+imgFileName+".png"
-    imgFile = open(imgFileFullPath,'wb')
-    imgFile.write(urllib.request.urlopen(imgUrl).read())
-    imgFile.close()
-    fileExtension = filetype.guess(imgFileFullPath).extension
-    newImgFileName = "tmpForImg/"+imgFileName+"."+fileExtension
+
+    try:
+        imgFile = open(imgFileFullPath,'wb')
+        imgFile.write(urllib.request.urlopen(imgUrl).read())
+    except Exception:
+        print("Image downloading error")
+        return ""
+    finally:
+        imgFile.close()
     
+    try:
+        fileExtension = filetype.guess(imgFileFullPath).extension
+        newImgFileName = "tmpForImg/"+imgFileName+"."+fileExtension
+    except Exception:
+        print("Error finding file extension. Probably file is damages")
+        return ""
+
     if (newImgFileName != imgFileFullPath):
         os.rename(imgFileFullPath, newImgFileName)
         imgFileFullPath = newImgFileName

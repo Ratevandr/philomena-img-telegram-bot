@@ -159,8 +159,8 @@ def dragonOnImageQuestion(update, context):
         bot.delete_message(chatId, update.callback_query.message.message_id)
 
         # send message 
-        if disablePreview==False:
-            imgPath = htmlUtil.downloadImage(imgUrlFromReply)
+        imgPath = htmlUtil.downloadImage(imgUrlFromReply)
+        if disablePreview==False and imgPath!="":
             imgFile = open(imgPath['imgPath'], 'rb')
             if  imgPath['imgExtension']=='gif' or imgPath['imgExtension']=='webm' :
                   bot.send_animation(chatId, imgFile, caption=replyMsgText)
@@ -198,6 +198,10 @@ def echo(update, context):
             else:
                 bot.send_chat_action(chatId, 'upload_photo')
                 imgPath = htmlUtil.downloadImage(imgUrlFromDrakony['Url'])
+                if imgPath=="":
+                    logger.error("Error image downloading "+imgUrlFromDrakony['Url'])
+                    bot.send_message(chatId, "Не удалось загрузить изображение :'(")
+                    return
 
                 imgFile = open(imgPath['imgPath'], 'rb')
                 if  imgPath['imgExtension']=='gif' or imgPath['imgExtension']=='webm' :
