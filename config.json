@@ -1,5 +1,7 @@
  {
      "philomena-key":"",
      "philomena-url":"",
-     "telegram-bot-token":""
+     "telegram-bot-token":"",
+     "nsfw-chatId":""
  }
+ 

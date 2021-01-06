@@ -11,14 +11,22 @@ import htmlUtil
 import os
 
 
+
 bot = 0
 artGalleryUrl = ""
+arrayNSFWchat = []
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 
+def chatIsNSFW(disablePreview,  chatId):
+    if disablePreview == True:
+        for nsfwChatId in arrayNSFWchat:
+            if str(nsfwChatId) == str(chatId):
+                return True
+    return False
 
 def start(update, context):
     """Send a message when the command /start is issued."""
@@ -150,6 +158,9 @@ def dragonOnImageQuestion(update, context):
                 finTag += "⚥"
             tagsString += finTag+'   '
 
+        if chatIsNSFW(disablePreview, chatId):
+            disablePreview = False
+                
         replyMsgText += '\n '
         replyMsgText += tagsString
         replyMsgText += "\n Отправлено: "+fromUserSenderIName
@@ -173,7 +184,6 @@ def dragonOnImageQuestion(update, context):
 
 
 def echo(update, context):
-    print(update.message.chat.id)
     if (not update.message or not update.message.text):
         return
     if (not htmlUtil.isCorrectUrl(str(update.message.text))):
@@ -192,16 +202,17 @@ def echo(update, context):
             chatId = update.message.chat.id
             bot.delete_message(chatId, msgId)
 
-            if (imgUrlFromDrakony and (imgUrlFromDrakony['Tags'].find('#explicit') != -1 or imgUrlFromDrakony['Tags'].find('#questionable') != -1)): 
+            imgPath = htmlUtil.downloadImage(imgUrlFromDrakony['Url'])
+            
+            nsfwTag = False
+            if imgUrlFromDrakony['Tags'].find('#explicit') != -1 or   imgUrlFromDrakony['Tags'].find('#questionable') != -1 :
+                nsfwTag = True
+            
+            if (imgUrlFromDrakony and (( nsfwTag or imgPath == "" ) and not chatIsNSFW(True, chatId))):
                 msgString = imgUrlFromDrakony['Url']+imgUrlFromDrakony['Tags']+'\nRef: '+imgUrlFromDrakony['UrlToPhilomena']
                 bot.send_message(chatId, msgString,  disable_web_page_preview=True)
             else:
                 bot.send_chat_action(chatId, 'upload_photo')
-                imgPath = htmlUtil.downloadImage(imgUrlFromDrakony['Url'])
-                if imgPath=="":
-                    logger.error("Error image downloading "+imgUrlFromDrakony['Url'])
-                    bot.send_message(chatId, "Не удалось загрузить изображение :'(")
-                    return
 
                 imgFile = open(imgPath['imgPath'], 'rb')
                 if  imgPath['imgExtension']=='gif' or imgPath['imgExtension']=='webm' :
@@ -245,6 +256,10 @@ def main():
     global artGalleryUrl
     artGalleryUrl = config["philomena-url"]
     token = config["telegram-bot-token"]
+    global arrayNSFWchat
+    arrayNSFWchat = config["nsfw-chatId"].split(',')
+    logger.info("Chat with nsfw: "+str(arrayNSFWchat))
+
     updater = Updater(
         token, use_context=True)
     global bot
