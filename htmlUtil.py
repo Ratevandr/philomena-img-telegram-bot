@@ -50,7 +50,7 @@ def isDeviantart(msgText):
 
 def isFurraffinity(msgText):
     name = urlparse(msgText).hostname
-    if (name == 'd.facdn.net'):
+    if (name == 'd.furaffinity.net'):
         return True
     return False
 
@@ -69,7 +69,7 @@ def getDeviantartArtist(ImgUrl):
 # check in whiteList
 
 whiteList = ['www.deviantart.com',
-             'd.facdn.net',
+             'd.furaffinity.net',
              'art.drakony.net',
              'dev-art.drakony.net',
              'userapi.com',  # for vkontakte
