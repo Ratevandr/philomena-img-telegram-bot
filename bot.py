@@ -32,6 +32,14 @@ def start(update, context):
     """Send a message when the command /start is issued."""
     update.message.reply_text('Привет! Я ваш новый бот! ')
 
+def dragonOnImageQuestionWithException(update, context):
+    try:
+        dragonOnImageQuestion(update, context)
+    except Exception:
+        bot.answer_callback_query(
+            callback_query_id=update.callback_query.id, text="Произошла ошибка при отправке!", show_alert=False)
+
+
 
 def dragonOnImageQuestion(update, context):
     fromUserClickedId = update.callback_query.from_user.id
@@ -88,21 +96,24 @@ def dragonOnImageQuestion(update, context):
                 keyboardMessageString = "Выберите теги"
                 buttonInLine = 1
             elif num == 2:
-                keyboardMessageString = "Молодец :3 Теперь выбери цвет."
+                keyboardMessageString = "А кто еще, кроме драконов, есть на изображении?"
                 buttonInLine = 3
             elif num == 3:
-                keyboardMessageString = "Выбирай ❗➡️ДОПОЛНИТЕЛЬНЫЕ⬅️❗ цвета"
+                keyboardMessageString = "Молодец :3 Теперь выбери цвет."
                 buttonInLine = 3
             elif num == 4:
-                keyboardMessageString = "А ты хорош :3 Теперь выбери рейтинг"
+                keyboardMessageString = "Выбирай ❗➡️ДОПОЛНИТЕЛЬНЫЕ⬅️❗ цвета"
                 buttonInLine = 4
             elif num == 5:
-                keyboardMessageString = "Продолжаем. Вот еще кучка популярных тегов. Что бы закончить жми END ✅"
+                keyboardMessageString = "А ты хорош :3 Теперь выбери рейтинг"
                 buttonInLine = 3
             elif num == 6:
-                keyboardMessageString = "Есть еще кучка тегов дальше➡️. Что бы закончить жми END ✅"
+                keyboardMessageString = "Продолжаем. Вот еще кучка популярных тегов. Что бы закончить жми END ✅"
                 buttonInLine = 3
             elif num == 7:
+                keyboardMessageString = "Есть еще кучка тегов дальше➡️. Что бы закончить жми END ✅"
+                buttonInLine = 3
+            elif num == 8:
                 keyboardMessageString = "Молодец! А теперь можно перейти в галерею"
                 buttonInLine = 3
 
@@ -267,7 +278,7 @@ def main():
     dp = updater.dispatcher
 
     dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CallbackQueryHandler(dragonOnImageQuestion))
+    dp.add_handler(CallbackQueryHandler(dragonOnImageQuestionWithException))
 
     dp.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
 

@@ -11,6 +11,26 @@ tags1 = {
  }
 
 tags2 = {
+"gryphon":'tag_eastern',
+"bird 🐦":'tag_western',
+"snake 🐍":'tag_wyvern',
+"human 🧍":'tag_human',
+"furry":'tag_furry',
+"lizzard 🦎":'tag_amphiptere',
+"hippogriff":'tag_amphiptere',
+"unicorn 🦄":'tag_amphiptere',
+"horse 🐴":'tag_amphiptere',
+"pegas":'tag_amphiptere',
+"mlp 🐴":'tag_mlp',
+"anthro":'tag_anthro',
+"humanized":'tag_humanized',
+"feline 🐈":'tag_feline',
+'canine 🐺':'tag_canine',
+"Prev ⬅️":"service_prev",
+ "Next ➡️":"service_next"
+ }
+
+tags3 = {
 "black ⬛️":"color_black",
 "blue 🟦":"color_blue",
 "purple 🟪":"color_purple",
@@ -28,7 +48,7 @@ tags2 = {
 "Next ➡️":"service_next"
  }
 
-tags3 = {
+tags4 = {
 "black ⬛️":"secondColor_scblack",
 "blue 🟦" :"secondColor_scblue",
 "purple 🟪":"secondColor_scpurple",
@@ -46,7 +66,7 @@ tags3 = {
 "Next ➡️":"service_next"
  }
 
-tags4 = {
+tags5 = {
 "safe ✅":"rating_safe",
 "suggestive 😏":"rating_suggestive",
  "questionable ❔":"rating_questionable",
@@ -55,7 +75,7 @@ tags4 = {
 "Next ➡️":"service_next"
  }
  
-tags5 = {"solo":'moreTags_solo',
+tags6 = {"solo":'moreTags_solo',
 "feath., wings 🦢":'moreTags_feathWings',
 "cave":'moreTags_cave',
 "spread wings 🦇":'moreTags_spreadWings',
@@ -64,7 +84,7 @@ tags5 = {"solo":'moreTags_solo',
 "mane 🦄":'moreTags_mane',
 "cloud ☁️":'moreTags_cloud',
 "fire 🔥":'moreTags_fire',
-"mlp 🐴":'moreTags_mlp',
+"rain 🌧":'moreTags_rain',
 "forest 🌳":'moreTags_forest',
 "mountain ⛰":'moreTags_mountain',
 "food 🥡":'moreTags_food',
@@ -75,9 +95,6 @@ tags5 = {"solo":'moreTags_solo',
 "flying 🕊️":'moreTags_flying',
 "tail fluff 🦨":'moreTags_tailFluff',
 "fur ":'moreTags_fur',
-"furry":'moreTags_furry',
-"anthro":'moreTags_anthro',
-"human 🧍":'moreTags_human',
 "male ♂️":'moreTags_male',
 "female ♀️":'moreTags_female',
 "herm ⚥":'moreTags_herm',
@@ -85,7 +102,7 @@ tags5 = {"solo":'moreTags_solo',
 "MoreTags ➡️":"service_next",
 "END ✅":'service_end'}
  
-tags6 = {"hair":'moreTags2_hair',
+tags7 = {"hair":'moreTags2_hair',
 "photo 📷":'moreTags2_photo',
 "tradi;art":'moreTags2_tradArt',
 "transp; background":'moreTags2_transparentBackground',
@@ -104,7 +121,6 @@ tags6 = {"hair":'moreTags2_hair',
 "weapon":'moreTags2_weapon',
 "headphones 🎧":'moreTags2_headphones',
 "no wings":'moreTags2_noWings',
-"humanized":'moreTags2_humanized',
 "kissing💏":'moreTags2_kissing',
 "hug":'moreTags2_hug',
 "tree":'moreTags2_tree',
@@ -115,7 +131,7 @@ tags6 = {"hair":'moreTags2_hair',
 "MoreTags ➡️":'service_next',
 "END ✅":'service_end'}
  
-tags7 = {"morning 🌅":'moreTags3_morning',
+tags8 = {"morning 🌅":'moreTags3_morning',
 "lying down 🛏️":'moreTags3_lyingDown',
 "lying on nack":'moreTags3_lyingOnBack',
 "evening":'moreTags3_evening',
@@ -159,6 +175,8 @@ def updateKeyboard(num, buttonInLine):
         return tagToKeyboard(tags6, buttonInLine, num)
     elif num == 7:
         return tagToKeyboard(tags7, buttonInLine, num)
+    elif num == 8:
+        return tagToKeyboard(tags8, buttonInLine, num)
 
 
 def tagToKeyboard(tags, buttonInLine, num):

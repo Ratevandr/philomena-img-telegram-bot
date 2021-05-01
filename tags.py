@@ -113,7 +113,19 @@ tagsDit = {
     "source needed": "source needed",
     "artist questionable": "artist questionable",
     "useless source url": "useless source url",
-    "treasure":'treasure'}
+    "treasure":'treasure',
+    "rain":"rain",
+   "gryphon":"gryphon",
+    "bird":'bird',
+    "snake":'snake',
+    "furry":'furry',
+    "lizzard":"lizzard",
+    "hippogriff":"hippogriff",
+    "unicorn":"unicorn",
+    "horse":"horse",
+    "pegas":"pegas",
+    "feline":"feline",
+    "canine":"canine"}
 
 
 def getFullTageName(tagName):
