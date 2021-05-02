@@ -125,7 +125,15 @@ def dragonOnImageQuestion(update, context):
     # конец выбора
     if (msgType[0] == 'service' and msgType[1] == 'end'):
         tagList = db.getAnswers(tagColumnId)
-        APIdrakony.imgSend(imgUrlFromReply, tagList, fromUserSenderIName)
+        ret = APIdrakony.imgSend(imgUrlFromReply, tagList, fromUserSenderIName)
+        if (ret == -1):
+            bot.delete_message(chatId, msgId)
+            bot.delete_message(chatId, update.callback_query.message.message_id)
+            bot.send_message(chatId, fromUserSenderIName+" сорян соряныч. Произошла ошибка при отправке изображения с url:  "+imgUrlFromReply+" :(", 
+             disable_web_page_preview=True)
+            return 
+
+        
         philomenaUrl=""
         with open('config.json') as config_file:
             config = json.load(config_file)

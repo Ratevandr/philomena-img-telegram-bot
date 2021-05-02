@@ -118,13 +118,13 @@ def imgSend(imgUrl, tagsList, author):
 
     except ValueError as e:
         logging.error(f"Error while sending image: {e}")
-        return
+        return -1
 
     if "image" not in jsonData:
         logging.error(
             f"Error while sending image: - image key not found in JSON {jsonData}")
         logging.error(f"Sended JSON {jsonDict}")
-        return
+        return -1
     logging.info(f"Successful send img with url {realImgUrl}")
 
 
