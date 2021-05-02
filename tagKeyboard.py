@@ -11,23 +11,13 @@ tags1 = {
  }
 
 tags2 = {
-"gryphon":'tag_gryphon',
-"bird 🐦":'tag_bird',
-"snake 🐍":'tag_snake',
-"human 🧍":'tag_human',
-"furry":'tag_furry',
-"lizzard 🦎":'tag_lizzard',
-"hippogriff":'tag_hippogriff',
-"unicorn 🦄":'tag_unicorn',
-"horse 🐴":'tag_horse',
-"pegas":'tag_pegas',
-"mlp 🐴":'tag_mlp',
-"anthro":'tag_anthro',
-"humanized":'tag_humanized',
-"feline 🐈":'tag_feline',
-'canine 🐺':'tag_canine',
-"Prev ⬅️":"service_prev",
- "Next ➡️":"service_next"
+"safe ✅":"rating_safe",
+"suggestive 😏":"rating_suggestive",
+ "questionable ❔":"rating_questionable",
+ "explicit 🔞":"rating_explicit",
+ "Prev ⬅️":"service_prev",
+"Next ➡️":"service_next",
+"END ✅":'service_end'
  }
 
 tags3 = {
@@ -45,7 +35,8 @@ tags3 = {
 "rainbow 🌈":"color_rainbow",
 "other ❓":"color_other",
 "Prev ⬅️":"service_prev",
-"Next ➡️":"service_next"
+"Next ➡️":"service_next",
+"END ✅":'service_end'
  }
 
 tags4 = {
@@ -63,16 +54,30 @@ tags4 = {
 "rainbow 🌈":"secondColor_scrainbow",
 "other ❓":"secondColor_scother",
 "Prev ⬅️":"service_prev",
-"Next ➡️":"service_next"
+"Next ➡️":"service_next",
+"END ✅":'service_end'
  }
 
+
 tags5 = {
-"safe ✅":"rating_safe",
-"suggestive 😏":"rating_suggestive",
- "questionable ❔":"rating_questionable",
- "explicit 🔞":"rating_explicit",
- "Prev ⬅️":"service_prev",
-"Next ➡️":"service_next"
+"gryphon":'tag_gryphon',
+"bird 🐦":'tag_bird',
+"snake 🐍":'tag_snake',
+"human 🧍":'tag_human',
+"furry":'tag_furry',
+"lizzard 🦎":'tag_lizzard',
+"hippogriff":'tag_hippogriff',
+"unicorn 🦄":'tag_unicorn',
+"horse 🐴":'tag_horse',
+"pegas":'tag_pegas',
+"mlp 🐴":'tag_mlp',
+"anthro":'tag_anthro',
+"humanized":'tag_humanized',
+"feline 🐈":'tag_feline',
+'canine 🐺':'tag_canine',
+"Prev ⬅️":"service_prev",
+ "Next ➡️":"service_next",
+ "END ✅":'service_end'
  }
  
 tags6 = {"solo":'moreTags_solo',

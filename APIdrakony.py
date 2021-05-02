@@ -118,13 +118,24 @@ def imgSend(imgUrl, tagsList, author):
 
     except ValueError as e:
         logging.error(f"Error while sending image: {e}")
-        return -1
+        return e
 
     if "image" not in jsonData:
+        err = "Unknown Error: "+jsonData
         logging.error(
             f"Error while sending image: - image key not found in JSON {jsonData}")
         logging.error(f"Sended JSON {jsonDict}")
-        return -1
+        if "errors" in jsonData and "tag_input" in jsonData["errors"]:
+            err =  jsonData["errors"]["tag_input"][0]
+            if err =="must contain at least one rating tag":
+                err = "Пропущен тег рейтинга!"
+            return err
+        if "errors" in jsonData and "image" in jsonData["errors"]:
+            err = jsonData["errors"]["image"][0]
+            if err == "can't be blank":
+                err = "Не удалось загрузить изображение :("
+            return err
+        return err
     logging.info(f"Successful send img with url {realImgUrl}")
 
 

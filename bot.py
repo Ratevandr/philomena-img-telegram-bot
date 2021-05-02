@@ -96,7 +96,7 @@ def dragonOnImageQuestion(update, context):
                 keyboardMessageString = "Выберите теги"
                 buttonInLine = 1
             elif num == 2:
-                keyboardMessageString = "А кто еще, кроме драконов, есть на изображении?"
+                keyboardMessageString = "А ты хорош :3 Теперь выбери рейтинг"
                 buttonInLine = 3
             elif num == 3:
                 keyboardMessageString = "Молодец :3 Теперь выбери цвет."
@@ -105,7 +105,7 @@ def dragonOnImageQuestion(update, context):
                 keyboardMessageString = "Выбирай ❗➡️ДОПОЛНИТЕЛЬНЫЕ⬅️❗ цвета"
                 buttonInLine = 4
             elif num == 5:
-                keyboardMessageString = "А ты хорош :3 Теперь выбери рейтинг"
+                keyboardMessageString = "А кто еще, кроме драконов, есть на изображении?"
                 buttonInLine = 3
             elif num == 6:
                 keyboardMessageString = "Продолжаем. Вот еще кучка популярных тегов. Что бы закончить жми END ✅"
@@ -126,10 +126,11 @@ def dragonOnImageQuestion(update, context):
     if (msgType[0] == 'service' and msgType[1] == 'end'):
         tagList = db.getAnswers(tagColumnId)
         ret = APIdrakony.imgSend(imgUrlFromReply, tagList, fromUserSenderIName)
-        if (ret == -1):
+        if (ret):
             bot.delete_message(chatId, msgId)
             bot.delete_message(chatId, update.callback_query.message.message_id)
-            bot.send_message(chatId, fromUserSenderIName+" сорян соряныч. Произошла ошибка при отправке изображения с url:  "+imgUrlFromReply+" :(", 
+            bot.send_message(chatId, fromUserSenderIName+" сорян соряныч. Произошла ошибка при отправке изображения с url:  "+
+            imgUrlFromReply+" :(\nПричина ошибки:\n"+ ret, 
              disable_web_page_preview=True)
             return 
 
