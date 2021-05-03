@@ -120,6 +120,8 @@ def imgSend(imgUrl, tagsList, author):
         logging.error(f"Error while sending image: {e}")
         return e
 
+    logging.debug(f"Sended JSON {jsonDict}")
+
     if "image" not in jsonData:
         err = "Unknown Error: "+json.dumps(jsonData)
         logging.error(

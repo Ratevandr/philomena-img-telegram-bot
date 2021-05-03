@@ -82,7 +82,7 @@ def dragonOnImageQuestion(update, context):
             return
         
         if (msgType[0] != 'service'):
-            if (receivedTagListNum == 4): # 4 - rating. Tag was be unique
+            if (receivedTagListNum == 2): # 2 - rating. Tag was be unique
                 tagList = db.getAnswers(tagColumnId)
                 for tag in tagList:
                     if tag == "safe" or tag == "suggestive" or tag == "questionable" or tag == "explicit":
