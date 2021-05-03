@@ -42,6 +42,7 @@ def dragonOnImageQuestionWithException(update, context):
         replyMsgText = update.callback_query.message.reply_to_message.text
         imgUrlFromReply = htmlUtil.extractUrlFromString(replyMsgText)
         fromUserSenderIName = update.callback_query.message.reply_to_message.from_user.name
+        db.deleteOnKind(msgId,  chatId)
 
         bot.delete_message(chatId, msgId)
         bot.delete_message(chatId, update.callback_query.message.message_id)
@@ -71,6 +72,7 @@ def dragonOnImageQuestion(update, context):
     receivedTagListNum =  int(msgType["tagsListNumber"])
     msgType = msgType["tag"].split('_')
 
+    print("Inputted tag: "+msgType[1])
     if (len(msgType) < 2):
         return
 
@@ -136,9 +138,10 @@ def dragonOnImageQuestion(update, context):
         if (ret):
             bot.delete_message(chatId, msgId)
             bot.delete_message(chatId, update.callback_query.message.message_id)
-            bot.send_message(chatId, fromUserSenderIName+" сорян соряныч. Произошла ошибка при отправке изображения с url:  "+
+            bot.send_message(chatId, fromUserSenderIName+" сорян соряныч :( Произошла ошибка при отправке изображения с url:  "+
             imgUrlFromReply+" :(\nПричина ошибки:\n"+ ret, 
              disable_web_page_preview=True)
+            db.deleteOnKind(msgId,  chatId)
             return 
         
         philomenaUrl=""
