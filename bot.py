@@ -35,11 +35,18 @@ def start(update, context):
 def dragonOnImageQuestionWithException(update, context):
     try:
         dragonOnImageQuestion(update, context)
-    except Exception:
-        bot.answer_callback_query(
-            callback_query_id=update.callback_query.id, text="Произошла ошибка при отправке!", show_alert=False)
+    except Exception as err:
+        logging.exception("Error: {0}".format(err))
+        msgId = update.callback_query.message.reply_to_message.message_id
+        chatId = update.callback_query.message.chat.id
+        replyMsgText = update.callback_query.message.reply_to_message.text
+        imgUrlFromReply = htmlUtil.extractUrlFromString(replyMsgText)
+        fromUserSenderIName = update.callback_query.message.reply_to_message.from_user.name
 
-
+        bot.delete_message(chatId, msgId)
+        bot.delete_message(chatId, update.callback_query.message.message_id)
+        bot.send_message(chatId, fromUserSenderIName+" сорян соряныч. Произошла ошибка при отправке изображения с url:  "+
+        imgUrlFromReply+" :(\nПричина ошибки:\n{0}".format(err),  disable_web_page_preview=True)
 
 def dragonOnImageQuestion(update, context):
     fromUserClickedId = update.callback_query.from_user.id
@@ -133,7 +140,6 @@ def dragonOnImageQuestion(update, context):
             imgUrlFromReply+" :(\nПричина ошибки:\n"+ ret, 
              disable_web_page_preview=True)
             return 
-
         
         philomenaUrl=""
         with open('config.json') as config_file:

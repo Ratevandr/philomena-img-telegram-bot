@@ -121,7 +121,7 @@ def imgSend(imgUrl, tagsList, author):
         return e
 
     if "image" not in jsonData:
-        err = "Unknown Error: "+jsonData
+        err = "Unknown Error: "+json.dumps(jsonData)
         logging.error(
             f"Error while sending image: - image key not found in JSON {jsonData}")
         logging.error(f"Sended JSON {jsonDict}")
@@ -137,6 +137,7 @@ def imgSend(imgUrl, tagsList, author):
             return err
         return err
     logging.info(f"Successful send img with url {realImgUrl}")
+    return 
 
 
 def tagPopularity():
@@ -164,7 +165,6 @@ def tagPopularity():
                         tagsArray[key] = tagsArray[key]+1
                     else:
                         tagsArray[key] = 1
-    print(" ")
 
     tagsArraySorted = dict(sorted(tagsArray.items(), key=lambda item: item[1], reverse=True))
 
