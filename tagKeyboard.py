@@ -16,8 +16,7 @@ tags2 = {
  "questionable ❔":"rating_questionable",
  "explicit 🔞":"rating_explicit",
  "Prev ⬅️":"service_prev",
-"Next ➡️":"service_next",
-"END ✅":'service_end'
+"Next ➡️":"service_next"
  }
 
 tags3 = {
@@ -35,8 +34,7 @@ tags3 = {
 "rainbow 🌈":"color_rainbow",
 "other ❓":"color_other",
 "Prev ⬅️":"service_prev",
-"Next ➡️":"service_next",
-"END ✅":'service_end'
+"Next ➡️":"service_next"
  }
 
 tags4 = {
@@ -54,8 +52,7 @@ tags4 = {
 "rainbow 🌈":"secondColor_scrainbow",
 "other ❓":"secondColor_scother",
 "Prev ⬅️":"service_prev",
-"Next ➡️":"service_next",
-"END ✅":'service_end'
+"Next ➡️":"service_next"
  }
 
 
@@ -104,8 +101,7 @@ tags6 = {"solo":'moreTags_solo',
 "female ♀️":'moreTags_female',
 "herm ⚥":'moreTags_herm',
 "Prev ⬅️":"service_prev",
-"MoreTags ➡️":"service_next",
-"END ✅":'service_end'}
+"MoreTags ➡️":"service_next"}
  
 tags7 = {"hair":'moreTags2_hair',
 "photo 📷":'moreTags2_photo',
@@ -133,8 +129,7 @@ tags7 = {"hair":'moreTags2_hair',
 "grass 🌿":'moreTags2_grass',
 "morning":'moreTags2_morning',
 "Prev ⬅️":'service_prev',
-"MoreTags ➡️":'service_next',
-"END ✅":'service_end'}
+"MoreTags ➡️":'service_next'}
  
 tags8 = {"morning 🌅":'moreTags3_morning',
 "lying down 🛏️":'moreTags3_lyingDown',
