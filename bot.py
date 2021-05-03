@@ -205,7 +205,7 @@ def dragonOnImageQuestion(update, context):
             if  imgPath['imgExtension']=='gif' or imgPath['imgExtension']=='webm' :
                   bot.send_animation(chatId, imgFile, caption=replyMsgText)
             else:
-                bot.send_photo(chatId, imgFile, caption=replyMsgText)
+                bot.send_photo(chatId, imgFile, caption=replyMsgText, timeout=120)
             imgFile.close()
         else:
             bot.send_message(chatId, replyMsgText, reply_markup=reply_markup,  disable_web_page_preview=disablePreview)
@@ -249,7 +249,7 @@ def echo(update, context):
                       bot.send_animation(chatId, imgFile, caption=msgCaptionStr)
                 else:
                     msgCaptionStr = imgUrlFromDrakony['Tags']+'\nRef: '+imgUrlFromDrakony['UrlToPhilomena']
-                    bot.send_photo(chatId, imgFile, msgCaptionStr)
+                    bot.send_photo(chatId, imgFile, msgCaptionStr,  timeout=120)
 
                 imgFile.close()
                 if os.path.exists(imgPath['imgPath']):
