@@ -2,23 +2,28 @@ import re
 from urllib.parse import urlparse
 import urllib
 import logging
-import uuid
+import hashlib
 import filetype
 import os
+import shutil
  
 def downloadImage(imgUrl):
-    imgFileName=str(uuid.uuid4())
+
+    sha1 = hashlib.sha1()
+    sha1.update(imgUrl.encode('utf-8'))
+    imgFileName= sha1.hexdigest()
     imgFileFullPath="tmpForImg/"+imgFileName+".png"
 
-    try:
-        imgFile = open(imgFileFullPath,'wb')
-        imgFile.write(urllib.request.urlopen(imgUrl).read())
-    except Exception:
-        print("Image downloading error")
-        return ""
-    finally:
-        imgFile.close()
-    
+    if not os.path.isfile(imgFileFullPath):
+        try:
+            imgFile = open(imgFileFullPath,'wb')
+            imgFile.write(urllib.request.urlopen(imgUrl).read())
+        except Exception:
+            print("Image downloading error")
+            return ""
+        finally:
+            imgFile.close()
+
     try:
         fileExtension = filetype.guess(imgFileFullPath).extension
         newImgFileName = "tmpForImg/"+imgFileName+"."+fileExtension
@@ -26,10 +31,11 @@ def downloadImage(imgUrl):
         print("Error finding file extension. Probably file is damages")
         return ""
 
-    if (newImgFileName != imgFileFullPath):
-        os.rename(imgFileFullPath, newImgFileName)
+    if (newImgFileName != imgFileFullPath and not os.path.isfile(newImgFileName)):
+        shutil.copyfile(imgFileFullPath, newImgFileName)
         imgFileFullPath = newImgFileName
         print(imgFileFullPath)
+
     returnImgStruct = {
         'imgPath':imgFileFullPath,
         'imgExtension':fileExtension

@@ -1,5 +1,5 @@
 import logging
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 import tagKeyboard
 import re
@@ -134,12 +134,12 @@ def dragonOnImageQuestion(update, context):
     # конец выбора
     if (msgType[0] == 'service' and msgType[1] == 'end'):
         tagList = db.getAnswers(tagColumnId)
-        ret = APIdrakony.imgSend(imgUrlFromReply, tagList, fromUserSenderIName)
-        if (ret):
+        apiDrakonyRes = APIdrakony.imgSend(imgUrlFromReply, tagList, fromUserSenderIName)
+        if (apiDrakonyRes["error"]):
             bot.delete_message(chatId, msgId)
             bot.delete_message(chatId, update.callback_query.message.message_id)
             bot.send_message(chatId, fromUserSenderIName+" сорян соряныч :( Произошла ошибка при отправке изображения с url:  "+
-            imgUrlFromReply+" :(\nПричина ошибки:\n"+ ret, 
+            imgUrlFromReply+" :(\nПричина ошибки:\n"+ apiDrakonyRes["error"], 
              disable_web_page_preview=True)
             db.deleteOnKind(msgId,  chatId)
             return 
@@ -189,12 +189,22 @@ def dragonOnImageQuestion(update, context):
 
         if chatIsNSFW(disablePreview, chatId):
             disablePreview = False
-                
-        replyMsgText += '\n '
+
+        replyMsgText=""
+        if apiDrakonyRes["sourcePostUrl"]!=None :
+            postUrl = apiDrakonyRes["sourcePostUrl"]
+            replyMsgText+=f'<a href="{postUrl}">Post Link</a>\n'
+
+        if apiDrakonyRes["philomenaImgUrl"]:
+            directImgUrl = apiDrakonyRes["philomenaImgUrl"]
+            replyMsgText+=f'<a href="{directImgUrl}">Direct Link</a>\n'
+
+        philomenaUrlPost = apiDrakonyRes["philomenaPostUrl"]
+        replyMsgText += f'<a href="{philomenaUrlPost}">art.drakony.net Post Link</a>\n'
+        
         replyMsgText += tagsString
         replyMsgText += "\n Отправлено: "+fromUserSenderIName
-        replyMsgText += "\n Галерея: "+artGalleryUrl
-
+        
         bot.delete_message(chatId, msgId)
         bot.delete_message(chatId, update.callback_query.message.message_id)
 
@@ -203,12 +213,12 @@ def dragonOnImageQuestion(update, context):
         if disablePreview==False and imgPath!="":
             imgFile = open(imgPath['imgPath'], 'rb')
             if  imgPath['imgExtension']=='gif' or imgPath['imgExtension']=='webm' :
-                  bot.send_animation(chatId, imgFile, caption=replyMsgText)
+                  bot.send_animation(chatId, imgFile, caption=replyMsgText,parse_mode=ParseMode.HTML)
             else:
-                bot.send_photo(chatId, imgFile, caption=replyMsgText, timeout=120)
+                bot.send_photo(chatId, imgFile, caption=replyMsgText, timeout=120,parse_mode=ParseMode.HTML)
             imgFile.close()
         else:
-            bot.send_message(chatId, replyMsgText, reply_markup=reply_markup,  disable_web_page_preview=disablePreview)
+            bot.send_message(chatId, replyMsgText, reply_markup=reply_markup,  disable_web_page_preview=disablePreview,parse_mode=ParseMode.HTML)
         db.deleteOnKind(msgId,  groupId)
 
 
@@ -231,25 +241,39 @@ def echo(update, context):
             chatId = update.message.chat.id
             bot.delete_message(chatId, msgId)
 
-            imgPath = htmlUtil.downloadImage(imgUrlFromDrakony['Url'])
+            imgPath =""   
             
             nsfwTag = False
             if imgUrlFromDrakony['Tags'].find('#explicit') != -1 or   imgUrlFromDrakony['Tags'].find('#questionable') != -1 :
                 nsfwTag = True
             
+            msgCaptionStr = ""
+
+            if (imgUrlFromDrakony["sourcePostUrl"]):
+                sourcePostUrl = imgUrlFromDrakony["sourcePostUrl"]
+                msgCaptionStr +=f'<a href="{sourcePostUrl}">Post Link</a>\n'
+
+            if (imgUrlFromDrakony["philomenaImgUrl"]):
+                imgPath =  htmlUtil.downloadImage(imgUrlFromDrakony['philomenaImgUrl'])
+                philomenaImgUrl = imgUrlFromDrakony["philomenaImgUrl"]
+                msgCaptionStr += f'<a href="{philomenaImgUrl}">Direct Link</a>\n'
+
+            if (imgUrlFromDrakony["philomenaPostUrl"]):
+                postUrl = imgUrlFromDrakony["philomenaPostUrl"]
+                msgCaptionStr +=f'<a href="{postUrl}">art.drakony.net Post Link</a>\n'
+            
+            msgCaptionStr+='\n'
+            msgCaptionStr+=imgUrlFromDrakony['Tags']
             if (imgUrlFromDrakony and (( nsfwTag or imgPath == "" ) and not chatIsNSFW(True, chatId))):
-                msgString = imgUrlFromDrakony['Url']+imgUrlFromDrakony['Tags']+'\nRef: '+imgUrlFromDrakony['UrlToPhilomena']
-                bot.send_message(chatId, msgString,  disable_web_page_preview=True)
+                bot.send_message(chatId, msgCaptionStr,  disable_web_page_preview=True,parse_mode=ParseMode.HTML)
             else:
                 bot.send_chat_action(chatId, 'upload_photo')
 
                 imgFile = open(imgPath['imgPath'], 'rb')
                 if  imgPath['imgExtension']=='gif' or imgPath['imgExtension']=='webm' :
-                      msgCaptionStr = imgUrlFromDrakony['Tags']+'\nRef: '+imgUrlFromDrakony['UrlToPhilomena']
-                      bot.send_animation(chatId, imgFile, caption=msgCaptionStr)
+                      bot.send_animation(chatId, imgFile, caption=msgCaptionStr,parse_mode=ParseMode.HTML)
                 else:
-                    msgCaptionStr = imgUrlFromDrakony['Tags']+'\nRef: '+imgUrlFromDrakony['UrlToPhilomena']
-                    bot.send_photo(chatId, imgFile, msgCaptionStr,  timeout=120)
+                    bot.send_photo(chatId, imgFile, msgCaptionStr,  timeout=120,parse_mode=ParseMode.HTML)
 
                 imgFile.close()
                 if os.path.exists(imgPath['imgPath']):

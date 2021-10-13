@@ -4,7 +4,19 @@ import tags
 import logging
 import deviantart
 import htmlUtil
+import fuzzySearch
+from urllib.parse import urlparse
+from os.path import splitext, basename
 
+allowMediaFormat = [".jpg",".jpeg",".png",".bmp",".gif",".webm",".mp4",".avi",".swf",".svg"]
+
+def checkSourceUrlPost(sourceUrl):
+    curPath = urlparse(sourceUrl)
+    filename, fileExt = splitext(basename(curPath.path))
+    print(fileExt)
+    if fileExt in allowMediaFormat:
+        return False
+    return True
 
 def imgSearch(imgUrl):
     if (htmlUtil.isDeviantart(imgUrl)):
@@ -24,17 +36,23 @@ def imgSearch(imgUrl):
     jsonData = json.loads(data)
 
     finalImgUrl = {
-        'Url': '',
+        "philomenaPostUrl":None,
+        "sourcePostUrl":None,
+        "philomenaImgUrl":None,
         'Tags': ''
     }
+            
 
     if ("total" in jsonData):
         if (jsonData["total"] > 0):
-            urlToPhilomena = philomenaUrl+"/images/" + \
+            philomenaPostUrl = philomenaUrl+"/images/" + \
                 str(jsonData["images"][0]["id"])
-            finalImgUrl['UrlToPhilomena'] = urlToPhilomena
-            finalImgUrl['Url'] = philomenaUrl + \
+            finalImgUrl['philomenaPostUrl'] = philomenaPostUrl
+            finalImgUrl['philomenaImgUrl'] = philomenaUrl + \
                 jsonData["images"][0]["representations"]["full"]
+            sourcePostUrl = jsonData["images"][0]["source_url"]
+            if (checkSourceUrlPost(sourcePostUrl)):
+                finalImgUrl['sourcePostUrl'] = sourcePostUrl
             for tag in jsonData["images"][0]["tags"]:
                 finTag = tag.replace(' ', '_')
                 finTag = finTag.replace(':', '_')
@@ -46,7 +64,7 @@ def imgSearch(imgUrl):
                     finTag += "♀️"
                 if (finTag == "herm"):
                     finTag += "⚥"
-                finalImgUrl['Tags'] += " #"+finTag
+                finalImgUrl['Tags'] += "#"+finTag+" "
             if jsonData["images"] and jsonData["images"][0] and jsonData["images"][0]["description"]:
                 desc = jsonData["images"][0]["description"]
                 desc = desc.replace('@', ' ')
@@ -67,7 +85,9 @@ def imgSend(imgUrl, tagsList, author):
     URL = philomenaUrl+"/api/v1/json/images?key="+philomenaKey
     realImgUrl = ""
     sourceImgUrl = ""
+    artistImgUrl = ""
     tagsString = ""
+    postUrlGet = False
     if (htmlUtil.isDeviantart(imgUrl)):
         realImgUrl = deviantart.getImgUrlFromDeviantArt(imgUrl)
         deviantArtist = htmlUtil.getDeviantartArtist(imgUrl)
@@ -81,8 +101,13 @@ def imgSend(imgUrl, tagsList, author):
                 tagsString += 'artist:'+str(furraffinityArtist)+', '
                 tagsList.append('useless source url')
                 realImgUrl = imgUrl
-                sourceImgUrl = "https://www.furaffinity.net/user/" + \
+                artistImgUrl = "https://www.furaffinity.net/user/" + \
                     str(furraffinityArtist)+"/"
+                
+                 
+                imgPath = htmlUtil.downloadImage(imgUrl)
+                sourceImgUrl = fuzzySearch.searchImgPost(imgPath["imgPath"])
+                postUrlGet = True
             else:
                 logging.error("Error getting furraffinity artist!")
         else:
@@ -101,7 +126,7 @@ def imgSend(imgUrl, tagsList, author):
     headers = {'Content-type': 'application/json'}
     jsonDict = {
         "image": {
-            "description": "Sent by "+author+" from telegram bot",
+            "description": f"Sent by {author} from telegram bot \nartist url: {artistImgUrl}",
             "tag_input": tagsString,
             "source_url": sourceImgUrl
         },
@@ -120,26 +145,40 @@ def imgSend(imgUrl, tagsList, author):
         logging.error(f"Error while sending image: {e}")
         return e
 
-    logging.debug(f"Sended JSON {jsonDict}")
+    res = {
+        "error":None,
+        "philomenaPostUrl":None,
+        "sourcePostUrl":None,
+        "philomenaImgUrl":None
+    }
 
     if "image" not in jsonData:
-        err = "Unknown Error: "+json.dumps(jsonData)
+        res["error"] = "Unknown Error: "+json.dumps(jsonData)
         logging.error(
             f"Error while sending image: - image key not found in JSON {jsonData}")
         logging.error(f"Sended JSON {jsonDict}")
         if "errors" in jsonData and "tag_input" in jsonData["errors"]:
-            err =  jsonData["errors"]["tag_input"][0]
-            if err =="must contain at least one rating tag":
-                err = "Пропущен тег рейтинга!"
-            return err
+            res["error"] =  jsonData["errors"]["tag_input"][0]
+            if res["error"] =="must contain at least one rating tag":
+                res["error"] = "Пропущен тег рейтинга!"
+            return res
         if "errors" in jsonData and "image" in jsonData["errors"]:
-            err = jsonData["errors"]["image"][0]
-            if err == "can't be blank":
-                err = "Не удалось загрузить изображение :("
-            return err
-        return err
+            res["error"] = jsonData["errors"]["image"][0]
+            if res["error"] == "can't be blank":
+                res["error"] = "Не удалось загрузить изображение :("
+            return res
+        return res
     logging.info(f"Successful send img with url {realImgUrl}")
-    return 
+    philomenaImgId = jsonData["image"]["id"]
+    philomenaFullImgUrl =  jsonData["image"]["representations"]["full"]
+    if postUrlGet:
+        sourcePostUrl = sourceImgUrl
+   
+    res["philomenaPostUrl"] = f"{philomenaUrl}/images/{philomenaImgId}"
+    res["sourcePostUrl"] = sourcePostUrl
+    res["philomenaImgUrl"] = f"{philomenaUrl}/{philomenaFullImgUrl}"
+ 
+    return res
 
 
 def tagPopularity():
