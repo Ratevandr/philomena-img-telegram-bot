@@ -1,4 +1,3 @@
- 
 import requests
 import json
 import logging
@@ -31,6 +30,3 @@ def searchImgPost(fullPathToImg):
             else:
                 logging.debug(f"FuzzySearch response code is {resp.status_code}")
     return ""
-
-
-print(searchImgPost("/home/landgrafpc/Изображения/photo_2021-10-13_14-41-27.jpg"))
