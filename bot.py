@@ -195,6 +195,7 @@ def dragonOnImageQuestion(update, context):
             postUrl = apiDrakonyRes["sourcePostUrl"]
             replyMsgText+=f'<a href="{postUrl}">Post Link</a>\n'
 
+        directImgUrl=""
         if apiDrakonyRes["philomenaImgUrl"]:
             directImgUrl = apiDrakonyRes["philomenaImgUrl"]
             replyMsgText+=f'<a href="{directImgUrl}">Direct Link</a>\n'
@@ -209,7 +210,10 @@ def dragonOnImageQuestion(update, context):
         bot.delete_message(chatId, update.callback_query.message.message_id)
 
         # send message 
-        imgPath = htmlUtil.downloadImage(imgUrlFromReply)
+        imgPath = htmlUtil.downloadImage(directImgUrl)
+        if imgPath =="":
+            imgPath = htmlUtil.downloadImage(apiDrakonyRes["sourceUrl"])
+
         if disablePreview==False and imgPath!="":
             imgFile = open(imgPath['imgPath'], 'rb')
             if  imgPath['imgExtension']=='gif' or imgPath['imgExtension']=='webm' :

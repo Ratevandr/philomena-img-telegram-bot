@@ -93,7 +93,10 @@ def imgSend(imgUrl, tagsList, author):
         deviantArtist = htmlUtil.getDeviantartArtist(imgUrl)
         if (deviantArtist):
             tagsString += 'artist:'+str(deviantArtist)+', '
-            sourceImgUrl = imgUrl
+            artistImgUrl=f"https://www.deviantart.com/{deviantArtist}"
+        
+        sourceImgUrl = imgUrl
+        postUrlGet = True
     else:
         if (htmlUtil.isFurraffinity(imgUrl)):
             furraffinityArtist = htmlUtil.getFurraffinityArtist(imgUrl)
@@ -149,7 +152,8 @@ def imgSend(imgUrl, tagsList, author):
         "error":None,
         "philomenaPostUrl":None,
         "sourcePostUrl":None,
-        "philomenaImgUrl":None
+        "philomenaImgUrl":None,
+        "sourceUrl":realImgUrl
     }
 
     if "image" not in jsonData:

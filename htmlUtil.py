@@ -8,7 +8,6 @@ import os
 import shutil
  
 def downloadImage(imgUrl):
-
     sha1 = hashlib.sha1()
     sha1.update(imgUrl.encode('utf-8'))
     imgFileName= sha1.hexdigest()
@@ -18,8 +17,8 @@ def downloadImage(imgUrl):
         try:
             imgFile = open(imgFileFullPath,'wb')
             imgFile.write(urllib.request.urlopen(imgUrl).read())
-        except Exception:
-            print("Image downloading error")
+        except Exception as ex:
+            logging.error(f"Image downloading error {imgUrl}: {ex}")
             return ""
         finally:
             imgFile.close()
@@ -27,14 +26,14 @@ def downloadImage(imgUrl):
     try:
         fileExtension = filetype.guess(imgFileFullPath).extension
         newImgFileName = "tmpForImg/"+imgFileName+"."+fileExtension
-    except Exception:
-        print("Error finding file extension. Probably file is damages")
+    except Exception as e:
+        logging.error(f"Error finding file extension. Probably file is damages {imgFileFullPath}: {e}")
         return ""
 
     if (newImgFileName != imgFileFullPath and not os.path.isfile(newImgFileName)):
         shutil.copyfile(imgFileFullPath, newImgFileName)
         imgFileFullPath = newImgFileName
-        print(imgFileFullPath)
+        logging.info(imgFileFullPath)
 
     returnImgStruct = {
         'imgPath':imgFileFullPath,
