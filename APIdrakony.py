@@ -171,6 +171,7 @@ def imgSend(imgUrl, tagsList, author):
     logging.info(f"Successful send img with url {realImgUrl}")
     philomenaImgId = jsonData["image"]["id"]
     philomenaFullImgUrl =  jsonData["image"]["representations"]["full"]
+    sourcePostUrl = None
     if postUrlGet:
         sourcePostUrl = sourceImgUrl
    
