@@ -143,7 +143,7 @@ def dragonOnImageQuestion(update, context):
         if (apiDrakonyRes["error"]):
             bot.delete_message(chatId, msgId)
             bot.delete_message(chatId, update.callback_query.message.message_id)
-            bot.send_message(chatId, userSendNameForImgSend+" сорян соряныч :( Произошла ошибка при отправке изображения с url:  "+
+            bot.send_message(chatId, fromUserSenderIName+" сорян соряныч :( Произошла ошибка при отправке изображения с url:  "+
             imgUrlFromReply+" :(\nПричина ошибки:\n"+ apiDrakonyRes["error"], 
              disable_web_page_preview=True)
             db.deleteOnKind(msgId,  chatId)
@@ -209,7 +209,7 @@ def dragonOnImageQuestion(update, context):
         replyMsgText += f'<a href="{philomenaUrlPost}">art.drakony.net Post Link</a>\n'
         
         replyMsgText += tagsString
-        replyMsgText += "\nОтправлено: "+userSendNameForImgSend
+        replyMsgText += "\nОтправлено: "+fromUserSenderIName
         
         bot.delete_message(chatId, msgId)
         bot.delete_message(chatId, update.callback_query.message.message_id)
