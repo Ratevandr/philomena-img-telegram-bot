@@ -15,6 +15,7 @@ import os
 bot = 0
 artGalleryUrl = ""
 arrayNSFWchat = []
+telegramUserIdForChangeToNone = []
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -72,7 +73,6 @@ def dragonOnImageQuestion(update, context):
     receivedTagListNum =  int(msgType["tagsListNumber"])
     msgType = msgType["tag"].split('_')
 
-    print("Inputted tag: "+msgType[1])
     if (len(msgType) < 2):
         return
 
@@ -134,11 +134,16 @@ def dragonOnImageQuestion(update, context):
     # конец выбора
     if (msgType[0] == 'service' and msgType[1] == 'end'):
         tagList = db.getAnswers(tagColumnId)
-        apiDrakonyRes = APIdrakony.imgSend(imgUrlFromReply, tagList, fromUserSenderIName)
+        userSendNameForImgSend = fromUserSenderIName
+ 
+        if userSendNameForImgSend in telegramUserIdForChangeToNone:
+            userSendNameForImgSend = "Anonym"
+
+        apiDrakonyRes = APIdrakony.imgSend(imgUrlFromReply, tagList, userSendNameForImgSend)
         if (apiDrakonyRes["error"]):
             bot.delete_message(chatId, msgId)
             bot.delete_message(chatId, update.callback_query.message.message_id)
-            bot.send_message(chatId, fromUserSenderIName+" сорян соряныч :( Произошла ошибка при отправке изображения с url:  "+
+            bot.send_message(chatId, userSendNameForImgSend+" сорян соряныч :( Произошла ошибка при отправке изображения с url:  "+
             imgUrlFromReply+" :(\nПричина ошибки:\n"+ apiDrakonyRes["error"], 
              disable_web_page_preview=True)
             db.deleteOnKind(msgId,  chatId)
@@ -204,7 +209,7 @@ def dragonOnImageQuestion(update, context):
         replyMsgText += f'<a href="{philomenaUrlPost}">art.drakony.net Post Link</a>\n'
         
         replyMsgText += tagsString
-        replyMsgText += "\n Отправлено: "+fromUserSenderIName
+        replyMsgText += "\nОтправлено: "+userSendNameForImgSend
         
         bot.delete_message(chatId, msgId)
         bot.delete_message(chatId, update.callback_query.message.message_id)
@@ -316,6 +321,8 @@ def main():
     global arrayNSFWchat
     arrayNSFWchat = config["nsfw-chatId"].split(',')
     logger.info("Chat with nsfw: "+str(arrayNSFWchat))
+    global telegramUserIdForChangeToNone
+    telegramUserIdForChangeToNone = config["TelegramUserIdForChangeToNone"].split(',')
 
     updater = Updater(
         token, use_context=True)
