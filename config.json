@@ -2,7 +2,7 @@
      "philomena-key":"",
      "philomena-url":"",
      "telegram-bot-token":"",
-     "nsfw-chatId":"-123,-12345",
-     "fuzzy-search-api-key":""
+     "nsfw-chatId":"",
+     "fuzzy-search-api-key":"",
+     "TelegramUserIdForChangeToNone":"@userNameExample"
  }
- 
